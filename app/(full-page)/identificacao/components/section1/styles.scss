@@ -1,0 +1,58 @@
+.identification-section1 {
+    border: 1px solid var(--surface-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+
+    .p-card-body {
+        padding: 1.5rem;
+    }
+
+    &__step,
+    &__mini-step {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 999px;
+
+        background: var(--green-600);
+        color: white;
+
+        font-weight: 700;
+
+        flex: 0 0 auto;
+    }
+
+    &__step {
+        width: 30px;
+        height: 30px;
+    }
+
+    &__mini-step {
+        width: 24px;
+        height: 24px;
+        font-size: 0.75rem;
+    }
+
+    &__wave {
+        span {
+            width: 3px;
+            border-radius: 999px;
+            background: var(--green-500);
+            opacity: 0.95;
+        }
+    }
+
+    &__play {
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+    }
+
+    .p-button {
+        border-radius: 12px;
+    }
+
+    .p-dropdown,
+    .p-inputtextarea {
+        border-radius: 12px;
+    }
+}

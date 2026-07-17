@@ -1,0 +1,161 @@
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
+.img-thumbnail {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+#map {
+  width: 100%;
+  height: 340px;
+}
+
+.popup-button {
+  display: block;
+  margin: 10px 0;
+  padding: 10px 20px;
+  font-size: 14px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup-button:hover {
+  background-color: #218838;
+}
+
+.scanner-container {
+  height: 30rem;
+  width: 40rem;
+  background-color: grey;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  position: relative;
+}
+
+.image-scanner,
+.video-scanner {
+  height: 30rem;
+  width: 40rem;
+  object-fit: cover;
+}
+
+.camera-icon {
+  font-size: 3rem;
+  color: white;
+}
+
+.align-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.rp-category-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+:root {
+    --accent: #25a643; /* verde principal do Radar Peçonhento */
+    --ink: #446236; /* verde escuro (títulos) */
+    --panel: #efefef; /* fundo da página */
+    --card-bg: #ffffff;
+    --shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+    --radius: 16px;
+}
+
+.rp-wrap {
+    padding: 1.25rem 1rem 2.5rem;
+    margin-inline: auto;
+    max-width: 1200px; /* centraliza e limita largura */
+}
+
+.rp-title {
+    text-align: center;
+    color: var(--ink);
+    margin: 0 0 1rem 0;
+    font-weight: 700;
+}
+
+.rp-card {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+
+.rp-card:hover,
+.rp-card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+}
+
+.rp-img {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* mantém quadrado e consistente */
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+}
+
+.rp-card:hover .rp-img,
+.rp-card:focus-visible .rp-img {
+    transform: scale(1.03);
+}
+
+.rp-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0.9rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0) 60%);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.rp-card:hover .rp-overlay,
+.rp-card:focus-visible .rp-overlay {
+    opacity: 1;
+    transform: translateY(0);
+    cursor: pointer;
+}
+
+.rp-badge {
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-weight: 700;
+    padding: 0.35rem 0.7rem;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(2px);
+}
+
+@media (max-width: 575px) {
+    .rp-wrap {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}

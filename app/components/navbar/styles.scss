@@ -1,0 +1,197 @@
+.navbar-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background: rgba(4, 18, 11, 0.86);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(80, 255, 120, 0.12);
+}
+
+.navbar {
+    width: 100%;
+
+    &__inner {
+        max-width: 1440px;
+        height: 76px;
+        margin: 0 auto;
+        padding: 0 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+
+        img {
+            width: 46px;
+            height: 46px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(57, 211, 83, 0.35));
+        }
+    }
+
+    &__brand-text {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        strong {
+            color: #ffffff;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        span {
+            padding: 3px 7px;
+            border-radius: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #b7ffc4;
+            background: rgba(57, 211, 83, 0.18);
+            border: 1px solid rgba(57, 211, 83, 0.25);
+        }
+    }
+
+    &__menu {
+        display: flex;
+        align-items: center;
+        gap: 34px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        a {
+            position: relative;
+            color: #e8f5ec;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: color 0.25s ease;
+
+            &::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: -10px;
+                width: 0;
+                height: 2px;
+                border-radius: 999px;
+                background: #39d353;
+                transition: width 0.25s ease;
+            }
+
+            &:hover,
+            &.active {
+                color: #39d353;
+
+                &::after {
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+    &__button {
+        border: 0 !important;
+        padding: 0.8rem 1.25rem !important;
+        font-weight: 700 !important;
+        color: #06130c !important;
+        background: linear-gradient(135deg, #5fe67d, #39d353) !important;
+        box-shadow: 0 0 24px rgba(57, 211, 83, 0.28);
+        transition: all 0.25s ease;
+
+        &:hover {
+            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 0 34px rgba(57, 211, 83, 0.42);
+        }
+    }
+
+    &__toggle {
+        display: none;
+    }
+
+    &__burger {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+
+        span {
+            width: 28px;
+            height: 2px;
+            border-radius: 999px;
+            background: #ffffff;
+            transition: 0.25s ease;
+        }
+    }
+}
+
+@media (max-width: 900px) {
+    .navbar {
+        &__inner {
+            height: 70px;
+            padding: 0 22px;
+        }
+
+        &__brand-text strong {
+            font-size: 0.95rem;
+        }
+
+        &__burger {
+            display: flex;
+        }
+
+        &__menu {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0;
+            padding: 18px 22px 26px;
+            background: rgba(4, 18, 11, 0.96);
+            border-bottom: 1px solid rgba(80, 255, 120, 0.12);
+            transform: translateY(-130%);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+
+            li {
+                width: 100%;
+            }
+
+            a {
+                display: block;
+                padding: 16px 0;
+                font-size: 1rem;
+
+                &::after {
+                    bottom: 8px;
+                }
+            }
+        }
+
+        &__login {
+            margin-top: 12px;
+        }
+
+        &__button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        &__toggle:checked ~ &__menu {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+    }
+}

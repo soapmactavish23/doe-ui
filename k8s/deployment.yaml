@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: ${K8S_DEPLOYMENT}
+    namespace: ${K8S_NAMESPACE}
+spec:
+    replicas: ${REPLICAS}
+    strategy:
+        type: RollingUpdate
+        rollingUpdate:
+            maxSurge: ${MAX_SURGE}
+            maxUnavailable: ${MAX_UNAVAILABLE}
+    selector:
+        matchLabels:
+            app: ${K8S_DEPLOYMENT}
+    template:
+        metadata:
+            labels:
+                app: ${K8S_DEPLOYMENT}
+        spec:
+            containers:
+                - name: radar-peconhento
+                  image: ${FULL_IMAGE_SHA}
+                  imagePullPolicy: Always
+                  ports:
+                      - containerPort: 3000
+                  envFrom:
+                      - configMapRef:
+                            name: ${K8S_DEPLOYMENT}-config
+                      - secretRef:
+                            name: ${K8S_DEPLOYMENT}-secret
+                  startupProbe:
+                      httpGet:
+                          path: /
+                          port: 3000
+                      failureThreshold: 60
+                      successThreshold: 1
+                      periodSeconds: 10
+                      timeoutSeconds: 5
+                  readinessProbe:
+                      httpGet:
+                          path: /
+                          port: 3000
+                      failureThreshold: 30
+                      successThreshold: 1
+                      periodSeconds: 10
+                      timeoutSeconds: 5
+                  livenessProbe:
+                      httpGet:
+                          path: /
+                          port: 3000
+                      failureThreshold: 30
+                      periodSeconds: 15
+                      timeoutSeconds: 5
+                  resources:
+                      requests:
+                          cpu: ${CPU_REQUEST}
+                          memory: ${MEMORY_REQUEST}
+                      limits:
+                          cpu: ${CPU_LIMIT}
+                          memory: ${MEMORY_LIMIT}

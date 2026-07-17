@@ -1,0 +1,275 @@
+.section2 {
+    padding: 36px 8% 70px;
+    background: #f8faf8;
+    color: #102016;
+}
+
+.section2__how {
+    text-align: center;
+
+    h2 {
+        margin: 0;
+        color: #0e2b18;
+        font-size: 2.1rem;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+    }
+
+    > p {
+        margin: 8px 0 0;
+        color: #5f6f65;
+        font-size: 1rem;
+    }
+}
+
+.section2__steps {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 32px;
+}
+
+.step-card {
+    position: relative;
+    text-align: center;
+
+    &__icon {
+        width: 76px;
+        height: 76px;
+        margin: 0 auto 18px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: #185d31;
+        background: #e1f2e5;
+
+        i {
+            font-size: 2rem;
+        }
+    }
+
+    h3 {
+        margin: 0 0 10px;
+        color: #172319;
+        font-size: 1rem;
+        font-weight: 900;
+    }
+
+    p {
+        max-width: 180px;
+        margin: 0 auto;
+        color: #5f6f65;
+        font-size: 0.92rem;
+        line-height: 1.55;
+    }
+
+    &__arrow {
+        position: absolute;
+        top: 28px;
+        right: -24px;
+        color: #c2c8c3;
+        font-size: 2rem;
+        font-weight: 300;
+    }
+}
+
+.section2__divider {
+    height: 1px;
+    margin: 48px 0 20px;
+    background: #dfe5e0;
+}
+
+.section2__title {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 40px;
+    text-align: center;
+    position: relative;
+
+    h2 {
+        margin: 0;
+        color: #0e2b18;
+        font-size: 2.2rem;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+    }
+
+    p {
+        margin: 8px 0 0;
+        color: #5f6f65;
+        font-size: 0.95rem;
+    }
+
+    button {
+        position: absolute;
+        right: 4%;
+        bottom: 0;
+        height: 44px;
+        padding: 0 24px;
+        border-radius: 12px;
+        border: 1px solid #188a35;
+        background: transparent;
+        color: #188a35;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.25s ease;
+
+        &:hover {
+            background: #188a35;
+            color: #ffffff;
+        }
+    }
+}
+
+.species-carousel {
+    margin-top: 34px;
+    position: relative;
+}
+
+.species-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.species-card {
+    overflow: hidden;
+    border-radius: 15px;
+    background: #ffffff;
+    border: 1px solid #dfe5e0;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.05);
+    transition: all 0.25s ease;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+    }
+
+    &__image {
+        height: 150px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    &__content {
+        padding: 18px 20px 20px;
+    }
+
+    h3 {
+        margin: 0;
+        color: #1a241d;
+        font-size: 1.18rem;
+        font-weight: 900;
+    }
+
+    p {
+        margin: 5px 0 12px;
+        color: #66756b;
+        font-size: 0.92rem;
+    }
+
+    &__tag {
+        display: inline-flex;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 900;
+    }
+
+    &__tag.jararaca {
+        color: #188a35;
+        background: #e3f7e8;
+    }
+
+    &__tag.coral {
+        color: #a97900;
+        background: #fff1bd;
+    }
+
+    &__tag.cascavel {
+        color: #c35c18;
+        background: #ffe4cc;
+    }
+
+    &__tag.surucucu {
+        color: #c92b2b;
+        background: #ffe1dd;
+    }
+}
+
+.species-carousel__arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    width: 46px;
+    height: 46px;
+    border: 1px solid #e2e8e3;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #7a867d;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+
+    &--left {
+        left: 1%;
+    }
+
+    &--right {
+        right: 1%;
+    }
+
+    &:hover {
+        color: #188a35;
+        border-color: #188a35;
+    }
+}
+
+.species-card__image {
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+@media (max-width: 1100px) {
+    .section2__steps {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .step-card__arrow {
+        display: none;
+    }
+
+    .species-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .section2__title {
+        flex-direction: column;
+        align-items: center;
+
+        button {
+            position: static;
+        }
+    }
+}
+
+@media (max-width: 640px) {
+    .section2 {
+        padding: 46px 24px 60px;
+    }
+
+    .section2__steps,
+    .species-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .species-carousel__arrow {
+        display: none;
+    }
+}

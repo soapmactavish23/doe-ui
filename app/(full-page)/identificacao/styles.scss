@@ -1,0 +1,12 @@
+.identification-page {
+    width: 100%;
+    min-height: 100vh;
+    background: #f8faf9;
+    padding: 1.5rem;
+
+    &__container {
+        width: 100%;
+        max-width: 1560px;
+        margin: 0 auto;
+    }
+}
