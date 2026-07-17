@@ -61,7 +61,7 @@ export default function RecoveryPassword() {
                         style={{
                             borderRadius: '56px',
                             padding: '0.3rem',
-                            background: 'linear-gradient(180deg, var(--green-400) 100%, rgba(33, 150, 243, 0) 100%)'
+                            background: 'linear-gradient(180deg, var(--yellow-400) 100%, rgba(33, 150, 243, 0) 100%)'
                         }}
                     >
                         <div className="w-full surface-card py-8 px-5 sm:px-8" style={{ borderRadius: '53px' }}>
@@ -77,8 +77,8 @@ export default function RecoveryPassword() {
                                 </label>
                                 <InputText id="email1" type="email" placeholder="Digite seu e-mail" className="w-full md:w-30rem mb-5 text-xl" style={{ padding: '1rem' }} {...register('email')} required />
                                 <div></div>
-                                <Button label="Recuperar Senha" loading={isSubmitting} type="submit" severity="success" className="w-full p-3 text-xl mb-3"></Button>
-                                <Button label="Voltar" outlined type="button" severity="success" className="w-full p-3 text-xl" icon="pi pi-arrow-left" onClick={() => router.push('/auth/login')}></Button>
+                                <Button label="Recuperar Senha" loading={isSubmitting} type="submit" severity="warning" className="w-full p-3 text-xl mb-3"></Button>
+                                <Button label="Voltar" outlined type="button" severity="warning" className="w-full p-3 text-xl" icon="pi pi-arrow-left" onClick={() => router.push('/auth/login')}></Button>
                             </form>
                         </div>
                     </div>

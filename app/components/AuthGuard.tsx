@@ -9,7 +9,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true);
     const runningRef = useRef(false);
 
-    const pathGranted: string[] = ['/home', '/identificacao', '/catalogo', '/dashboard', '/animal', '/pesquisa', '/quem-somos', '/auth/login', '/auth/recovery-password'];
+    const pathGranted: string[] = ['/auth/login', '/auth/recovery-password'];
 
     const base64UrlToBase64 = (input: string) => {
         let str = input.replace(/-/g, '+').replace(/_/g, '/');
@@ -53,7 +53,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
             if (!access) {
                 if (!pathGranted.includes(pathname)) {
-                    router.replace('/home');
+                    router.replace(pathGranted[0]);
                 } else {
                     setLoading(false);
                 }
@@ -69,7 +69,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
             if (!refresh) {
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
-                router.replace('/home');
+                router.replace(pathGranted[0]);
                 return;
             }
 
@@ -77,7 +77,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
             if (isExpired(refreshExp)) {
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
-                router.replace('/home');
+                router.replace(pathGranted[0]);
                 return;
             }
 
@@ -91,7 +91,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
             } catch (e) {
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
-                router.replace('/home');
+                router.replace(pathGranted[0]);
             }
         })().finally(() => {
             runningRef.current = false;

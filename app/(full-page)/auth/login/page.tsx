@@ -81,13 +81,13 @@ const LoginPage = () => {
                         style={{
                             borderRadius: '56px',
                             padding: '0.3rem',
-                            background: 'linear-gradient(180deg, var(--green-400) 100%, rgba(33, 150, 243, 0) 100%)'
+                            background: 'linear-gradient(180deg, var(--yellow-400) 100%, rgba(33, 150, 243, 0) 100%)'
                         }}
                     >
                         <div className="w-full surface-card py-8 px-5 sm:px-8" style={{ borderRadius: '53px' }}>
                             <div className="text-center mb-5">
                                 <img src="/demo/images/logo.png" alt="Image" height="100" className="mb-3" />
-                                <div className="text-900 text-3xl font-medium mb-3">Radar Peçonhento</div>
+                                <div className="text-900 text-3xl font-medium mb-3">DOE</div>
                                 <span className="text-600 font-medium">Logue para continuar</span>
                             </div>
 
@@ -108,9 +108,7 @@ const LoginPage = () => {
                                     </a>
                                 </div>
 
-                                <Button label="Entrar" loading={isSubmitting || isNavigating} type="submit" severity="success" className="w-full p-3 text-xl mb-3" disabled={isSubmitting || isNavigating} />
-
-                                <Button label="Voltar" outlined type="button" severity="success" className="w-full p-3 text-xl" icon="pi pi-arrow-left" onClick={() => goTo('/home')} disabled={isSubmitting || isNavigating} />
+                                <Button label="Entrar" loading={isSubmitting || isNavigating} type="submit" severity="warning" className="w-full p-3 text-xl mb-3" disabled={isSubmitting || isNavigating} />
                             </form>
                         </div>
                     </div>

@@ -1,5 +1,4 @@
 import './styles.css';
-import ufpaLogo from '../../../public/demo/images/ufpa.png';
 import packageJson from '../../../package.json';
 export default function Footer() {
     const version = packageJson.version;
@@ -7,7 +6,6 @@ export default function Footer() {
     return (
         <footer className="footer">
             <div className="footer__content">
-                <img alt="ufpa" src={ufpaLogo.src} height={50} />
                 <div className="footer__left">
                     <span>
                         Todos os direitos reservados a <strong>Henrick Nogueira</strong> – Mestrando PPCA UFPA – <strong>v{version}</strong>

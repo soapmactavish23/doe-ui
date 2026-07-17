@@ -7,7 +7,7 @@ interface AppLayoutProps {
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://house-software.com.br/doe-react'),
-    title: 'Doe',
+    title: 'DOE',
     description: 'This project is the project for management of childs.',
     robots: { index: false, follow: false },
     viewport: { initialScale: 1, width: 'device-width' },

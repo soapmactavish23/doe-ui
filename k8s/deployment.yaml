@@ -19,7 +19,7 @@ spec:
                 app: ${K8S_DEPLOYMENT}
         spec:
             containers:
-                - name: radar-peconhento
+                - name: doe
                   image: ${FULL_IMAGE_SHA}
                   imagePullPolicy: Always
                   ports:
