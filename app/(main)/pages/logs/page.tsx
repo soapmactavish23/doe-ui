@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { DataTableFilterMeta, LazyTableState } from '@/app/api/core/pageable';
-import { LogResponse } from '@/app/api/models/log';
-import { User } from '@/app/api/models/user';
-import { logService } from '@/app/api/services/log/log_service_impl';
-import { userService } from '@/app/api/services/user/user_service_impl';
+import { LogResponse } from '@/app/(main)/pages/logs/types/log';
+import { User } from '@/app/(main)/pages/users/types/user';
+import { logService } from '@/app/(main)/pages/logs/services/log_service_impl';
+import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
 import { FilterApply } from '@/app/components/datatable/filter-apply';
 import { FilterClear } from '@/app/components/datatable/filter-clear';
 import { Message } from '@/app/components/Message';

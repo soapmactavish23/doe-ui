@@ -1,5 +1,5 @@
-import { User } from '@/app/api/models/user';
-import { userService } from '@/app/api/services/user/user_service_impl';
+import { User } from '@/app/(main)/pages/users/types/user';
+import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
 import { Message } from '@/app/components/Message';
 import { userContext } from '@/app/context/user_context';
 import { zodResolver } from '@hookform/resolvers/zod';

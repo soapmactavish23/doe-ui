@@ -11,7 +11,7 @@ import { Toast } from 'primereact/toast';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { userService } from '@/app/api/services/user/user_service_impl';
+import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
 import LoadingContent from '@/layout/LoadingContent';
 
 const formLogin = z.object({
@@ -86,7 +86,7 @@ const LoginPage = () => {
                     >
                         <div className="w-full surface-card py-8 px-5 sm:px-8" style={{ borderRadius: '53px' }}>
                             <div className="text-center mb-5">
-                                <img src="/demo/images/logo.png" alt="Image" height="100" className="mb-3" />
+                                <img src="logo.png" alt="Image" height="100" className="mb-3" />
                                 <div className="text-900 text-3xl font-medium mb-3">DOE</div>
                                 <span className="text-600 font-medium">Logue para continuar</span>
                             </div>

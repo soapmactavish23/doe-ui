@@ -1,10 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { LazyTableState } from '@/app/api/core/pageable';
-import { Animal, AnimalSearchDTO, newAnimal } from '@/app/api/models/animal';
-import { Category } from '@/app/api/models/category';
-import { animalService } from '@/app/api/services/animal/animal_service_impl';
-import { categoryService } from '@/app/api/services/category/category_service_impl';
 import { buildActionTemplate } from '@/app/components/datatable/buildActionTemplate';
 import { confirmDelete } from '@/app/components/datatable/confirmDelete';
 import { FilterApply } from '@/app/components/datatable/filter-apply';
@@ -15,15 +11,14 @@ import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { ConfirmDialog } from 'primereact/confirmdialog';
 import { DataTable, DataTablePageEvent, DataTableFilterEvent } from 'primereact/datatable';
-import { Dropdown } from 'primereact/dropdown';
 import { Fieldset } from 'primereact/fieldset';
 import { Toast } from 'primereact/toast';
 import React, { useRef, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 import { QueryKey } from '@/app/lib/react-query';
-import { userService } from '@/app/api/services/user/user_service_impl';
-import { newUser, User } from '@/app/api/models/user';
+import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
+import { newUser, User } from '@/app/(main)/pages/users/types/user';
 import { DialogEdit } from './components/DialogEdit';
 import { Tag } from 'primereact/tag';
 import { ToggleButton } from 'primereact/togglebutton';

@@ -67,17 +67,11 @@ const AppMenu = () => {
     const model: AppMenuItem[] = [
         {
             label: 'Home',
-            items: [
-                { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' },
-                { label: 'Validar Ocorrências', icon: 'pi pi-fw pi-exclamation-triangle', to: '/pages/valid-occurrence' }
-            ]
+            items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
         },
         {
-            label: 'Administração dos Animais',
-            items: [
-                { label: 'Animais', icon: 'pi pi-fw pi-sitemap', to: '/pages/animal' },
-                { label: 'Categorias', icon: 'pi pi-fw pi-table', to: '/pages/category' }
-            ]
+            label: 'Administração de pacientes',
+            items: [{ label: 'Pacientes', icon: 'pi pi-fw pi-sitemap', to: '/pages/patients' }]
         },
         {
             label: 'Administração de Usuários',

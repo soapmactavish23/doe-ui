@@ -1,5 +1,5 @@
-import { Group, newGroup } from '@/app/api/models/group';
-import { groupService } from '@/app/api/services/group/group_service_impl';
+import { Group, newGroup } from '@/app/(main)/pages/groups/types/group';
+import { groupService } from '@/app/(main)/pages/groups/services/group_service_impl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';

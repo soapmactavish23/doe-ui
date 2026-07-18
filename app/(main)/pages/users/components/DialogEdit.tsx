@@ -1,7 +1,7 @@
-import { Group } from '@/app/api/models/group';
-import { User } from '@/app/api/models/user';
-import { groupService } from '@/app/api/services/group/group_service_impl';
-import { userService } from '@/app/api/services/user/user_service_impl';
+import { Group } from '@/app/(main)/pages/groups/types/group';
+import { User } from '@/app/(main)/pages/users/types/user';
+import { groupService } from '@/app/(main)/pages/groups/services/group_service_impl';
+import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
 import { QueryKey } from '@/app/lib/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';

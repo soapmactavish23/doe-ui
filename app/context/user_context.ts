@@ -1,5 +1,5 @@
-import { User } from '../api/models/user';
-import { userService } from '../api/services/user/user_service_impl';
+import { User } from '../(main)/pages/users/types/user';
+import { userService } from '../(main)/pages/users/services/user_service_impl';
 import { decodeToken } from '../api/core/api';
 
 class UserContext {
