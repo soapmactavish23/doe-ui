@@ -11,6 +11,7 @@ import { classNames } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
+import imgLogo from '@/public/logo.png';
 
 const formLogin = z.object({
     email: z.string()
@@ -24,7 +25,7 @@ export default function RecoveryPassword() {
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting }
+        formState: { isSubmitting }
     } = useForm<FormLogin>({
         resolver: zodResolver(formLogin)
     });
@@ -66,7 +67,7 @@ export default function RecoveryPassword() {
                     >
                         <div className="w-full surface-card py-8 px-5 sm:px-8" style={{ borderRadius: '53px' }}>
                             <div className="text-center mb-5">
-                                <img src="logo.png" alt="Image" height="100" className="mb-3" />
+                                <img src={imgLogo.src} alt="Image" height="100" className="mb-3" />
                                 <div className="text-900 text-3xl font-medium mb-3">DOE</div>
                                 <span className="text-600 font-medium">Recuperar senha</span>
                             </div>

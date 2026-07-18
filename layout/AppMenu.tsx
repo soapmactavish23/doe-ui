@@ -4,7 +4,7 @@ import AppMenuitem from './AppMenuitem';
 import { MenuProvider } from './context/menucontext';
 import { AppMenuItem } from '@/types';
 import { usePathname } from 'next/navigation';
-import LoadingContent from './LoadingContent';
+import LoadingContent from './LoadingContent/LoadingContent';
 
 const AppMenu = () => {
     const pathname = usePathname();
