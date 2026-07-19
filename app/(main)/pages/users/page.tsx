@@ -9,7 +9,7 @@ import { imageBodyTemplateUser } from '@/app/components/datatable/image-body-tem
 import { Message } from '@/app/components/Message';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
-import { ConfirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 import { DataTable, DataTablePageEvent, DataTableFilterEvent } from 'primereact/datatable';
 import { Fieldset } from 'primereact/fieldset';
 import { Toast } from 'primereact/toast';
@@ -73,6 +73,40 @@ export default function UserPage() {
     const handleOpenEdit = (data: User) => {
         setObj({ ...data });
         setVisibleDialog(true);
+    };
+
+    const handleOpenResetPassword = (data: User) => {
+        confirmDialog({
+            message: `Deseja realmente resetar a senha do usuário ${data.name}?`,
+            header: 'Confirmação',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Confirmar',
+            rejectLabel: 'Cancelar',
+            accept: () => {
+                setIsSending(true);
+                userService
+                    .resetPassword(data.id!)
+                    .then(() => {
+                        setIsSending(false);
+                        toast.current!.show({
+                            severity: 'success',
+                            summary: Message.successMsg,
+                            detail: 'Sucesso ao resetar a senha do usuário.',
+                            life: 3000
+                        });
+                        refetch();
+                    })
+                    .catch((err) => {
+                        setIsSending(false);
+                        console.error(err);
+                        toast.current?.show({
+                            severity: 'error',
+                            summary: Message.errorMsg,
+                            detail: 'Erro ao resetar a senha do usuário.'
+                        });
+                    });
+            }
+        });
     };
 
     const handleOpenDelete = (rowData: User) => {
@@ -178,7 +212,19 @@ export default function UserPage() {
                     <Column field="name" header="Nome" filter showFilterMenuOptions={false} filterClear={FilterClear} filterApply={FilterApply} filterPlaceholder="Pesquisar" />
                     <Column field="email" header="E-mail" filter showFilterMenuOptions={false} filterClear={FilterClear} filterApply={FilterApply} filterPlaceholder="Pesquisar"></Column>
                     <Column field="status" header="Status" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} />
-                    <Column body={buildActionTemplate<User>(handleOpenEdit, handleOpenDelete)} exportable={false} style={{ minWidth: '12rem' }}></Column>
+                    <Column
+                        body={(rowData) => {
+                            return (
+                                <>
+                                    <Button icon="pi pi-pencil" rounded severity="success" className="mr-2" onClick={() => handleOpenEdit(rowData)} />
+                                    <Button icon="pi pi-lock" rounded severity="info" className="mr-2" onClick={() => handleOpenResetPassword(rowData)} />
+                                    <Button icon="pi pi-trash" rounded severity="danger" onClick={() => handleOpenDelete(rowData)} />
+                                </>
+                            );
+                        }}
+                        exportable={false}
+                        style={{ minWidth: '12rem' }}
+                    ></Column>
                 </DataTable>
             </Fieldset>
         </div>

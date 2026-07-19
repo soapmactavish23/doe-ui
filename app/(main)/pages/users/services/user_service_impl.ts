@@ -12,7 +12,7 @@ class UserServiceImpl implements UserService {
     async changePassword(passwordDTO: PasswordDTO) {
         await this._repository.changePassword(passwordDTO);
     }
-    async resetPassword(id: string) {
+    async resetPassword(id: string): Promise<void> {
         await this._repository.resetPassword(id);
     }
     async editProfile(profileDTO: ProfileDTO) {

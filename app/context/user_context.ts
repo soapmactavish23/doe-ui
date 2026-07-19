@@ -5,7 +5,7 @@ import { decodeToken } from '../api/core/api';
 class UserContext {
     async getUserLogged(): Promise<User> {
         const decoded = decodeToken();
-        return await userService.findByCode(decoded?.sub!);
+        return await userService.findById!(decoded?.sub!);
     }
 }
 

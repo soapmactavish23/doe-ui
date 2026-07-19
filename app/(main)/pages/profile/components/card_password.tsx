@@ -39,7 +39,7 @@ export default function CardPassword() {
         if (user?.id !== null) {
             userService
                 .changePassword({
-                    code: user?.code!,
+                    code: user?.id!,
                     password: data.password,
                     newPassword: data.newPassword,
                     confirmPassword: data.confirmPassword
