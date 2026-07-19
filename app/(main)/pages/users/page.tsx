@@ -21,7 +21,6 @@ import { userService } from '@/app/(main)/pages/users/services/user_service_impl
 import { newUser, User } from '@/app/(main)/pages/users/types/user';
 import { DialogEdit } from './components/DialogEdit';
 import { Tag } from 'primereact/tag';
-import { ToggleButton } from 'primereact/togglebutton';
 
 export default function UserPage() {
     // ################################### DATATABLE ###################################

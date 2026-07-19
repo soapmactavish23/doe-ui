@@ -6,14 +6,10 @@ export class UserRepositoryImpl implements UserRepository {
     async recoveryPassword(email: string) {
         await apiUnAuth.post(`usuarios/recuperar-senha?email=${email}`);
     }
-    async findByCode(code: string): Promise<User> {
-        const response = await api.get(`usuarios/code/${code}`);
-        return response.data;
-    }
     async changePassword(passwordDTO: PasswordDTO) {
         await api.put('usuarios/alterar-senha', passwordDTO);
     }
-    async resetPassword(id: number) {
+    async resetPassword(id: string) {
         await api.put(`usuarios/resetar-senha/${id}`);
     }
     async editProfile(profileDTO: ProfileDTO) {
@@ -30,7 +26,7 @@ export class UserRepositoryImpl implements UserRepository {
         return response.data;
     }
 
-    async changeStatus(id: number) {
+    async changeStatus(id: string) {
         await api.put(`usuarios/status/${id}`);
     }
     async search(name: string, email: string, pageable: Pageable): Promise<Page<User>> {
@@ -57,7 +53,12 @@ export class UserRepositoryImpl implements UserRepository {
         const response = await api.put('usuarios', t);
         return response.data;
     }
-    async remove(id: number) {
+    async remove(id: string) {
         await api.delete(`usuarios/${id}`);
+    }
+
+    async findById(id: string): Promise<User> {
+        const response = await api.get(`usuarios/${id}`);
+        return response.data;
     }
 }

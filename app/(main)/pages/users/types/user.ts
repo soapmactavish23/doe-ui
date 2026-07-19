@@ -1,8 +1,7 @@
 import { Group, newGroup } from '../../groups/types/group';
 
 export interface User {
-    id: number | null;
-    code: string;
+    id: string | null;
     name: string;
     email: string;
     password: string;
@@ -18,7 +17,7 @@ export interface PasswordDTO {
 }
 
 export interface ProfileDTO {
-    id: number;
+    id: string;
     name: string;
 }
 
@@ -39,7 +38,6 @@ export interface AuthLoginResponse {
 
 export let newUser: User = {
     id: null,
-    code: '',
     email: '',
     name: '',
     group: newGroup,

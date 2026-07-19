@@ -29,7 +29,7 @@ const createSchema = z
         confirmPassword: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
         email: z.string().email('E-mail inválido'),
         group: z.object({
-            id: z.number({ required_error: 'Grupo é obrigatório.' }),
+            id: z.string().nonempty('Grupo é obrigatório.'),
             name: z.string().nonempty('Grupo é obrigatório.')
         })
     })
@@ -42,7 +42,7 @@ const editSchema = z.object({
     name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
     email: z.string().email('E-mail inválido'),
     group: z.object({
-        id: z.number({ required_error: 'Grupo é obrigatório.' }),
+        id: z.string().nonempty('Grupo é obrigatório.'),
         name: z.string().nonempty('Grupo é obrigatório.')
     })
 });
@@ -203,7 +203,6 @@ export function DialogEdit({ visibleDialog, obj, onClose }: DialogProps) {
                                 </div>
                             </>
                         )}
-
                         <div className="col-12 field">
                             <label htmlFor="group">Grupo</label>
                             <Controller
@@ -222,7 +221,7 @@ export function DialogEdit({ visibleDialog, obj, onClose }: DialogProps) {
                                     />
                                 )}
                             />
-                            {errors.group && <small className="p-error">{errors.group.message}</small>}
+                            {errors.group && <small className="p-error">{errors.group.message || errors.group.id?.message || errors.group.name?.message}</small>}
                         </div>
                     </div>
                 </form>
