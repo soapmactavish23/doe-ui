@@ -1,6 +1,6 @@
 import { Responsable } from './responsable';
 
-export interface Patient {
+export interface PatientRequest {
     id: string | null;
     name: string;
     birthDate: Date;
@@ -10,7 +10,25 @@ export interface Patient {
     responsables: Responsable[];
 }
 
-export let newPatient: Patient = {
+export interface PatientResponse {
+    id: string;
+    name: string;
+    cause: string;
+    url: string;
+}
+
+export interface PatientResponseDetail {
+    id: string | null;
+    name: string;
+    birthDate: Date;
+    sex: 'MALE' | 'FEMALE';
+    cause: string;
+    startTreatment: Date;
+    url: string | null;
+    responsables: Responsable[];
+}
+
+export let newPatientRequest: PatientRequest = {
     id: null,
     name: '',
     birthDate: new Date(),
