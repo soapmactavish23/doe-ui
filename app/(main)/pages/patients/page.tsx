@@ -18,6 +18,7 @@ import { FilterClear } from '@/app/components/datatable/filter-clear';
 import { FilterApply } from '@/app/components/datatable/filter-apply';
 import { confirmDelete } from '@/app/components/datatable/confirmDelete';
 import { ConfirmDialog } from 'primereact/confirmdialog';
+import { useRouter } from 'next/navigation';
 
 interface PatientFilters extends DataTableFilterMeta {
     name: { value: ''; matchMode: 'contains' };
@@ -28,6 +29,8 @@ export default function Patients() {
     const dt = useRef<DataTable<PatientResponse[]>>(null);
     const [list, setList] = useState<PatientResponse[]>([]);
     const [totalElements, setTotalElements] = useState<number>(0);
+
+    const router = useRouter();
 
     const [lazyState, setLazyState] = useState<LazyTableState<PatientFilters>>({
         first: 0,
@@ -55,6 +58,14 @@ export default function Patients() {
             return response.content;
         }
     });
+
+    const handleOpenNew = () => {
+        router.push('/pages/patients/form-patient');
+    };
+
+    const handleOpenEdit = (rowData: PatientResponse) => {
+        router.push(`/pages/patients/form-patient?id=${rowData.id}`);
+    };
 
     const handleOpenDelete = (rowData: PatientResponse) => {
         confirmDelete({
@@ -111,7 +122,7 @@ export default function Patients() {
                                 icon="pi pi-plus"
                                 severity="success"
                                 onClick={() => {
-                                    console.log('Novo');
+                                    handleOpenNew();
                                 }}
                             />
                         </div>
@@ -145,7 +156,7 @@ export default function Patients() {
                         body={(rowData: PatientResponse) => {
                             return (
                                 <React.Fragment>
-                                    <Button icon="pi pi-pencil" rounded severity="success" className="mr-2" onClick={() => console.log('Editar')} />
+                                    <Button icon="pi pi-pencil" rounded severity="success" className="mr-2" onClick={() => handleOpenEdit(rowData)} />
                                     <Button icon="pi pi-trash" rounded severity="danger" onClick={() => handleOpenDelete(rowData)} />
                                 </React.Fragment>
                             );
