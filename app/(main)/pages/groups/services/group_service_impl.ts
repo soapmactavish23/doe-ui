@@ -14,7 +14,7 @@ class GroupServiceImpl implements GroupService {
     async update(group: Group): Promise<Group> {
         return await this._repository.update(group);
     }
-    async remove(id: number) {
+    async remove(id: string) {
         await this._repository.remove(id);
     }
 }

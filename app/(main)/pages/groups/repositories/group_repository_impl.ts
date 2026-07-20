@@ -15,7 +15,7 @@ export class GroupRepositoryImpl implements GroupRepository {
         const response = await api.put('grupos', group);
         return response.data;
     }
-    async remove(id: number) {
+    async remove(id: string) {
         await api.delete(`grupos/${id}`);
     }
 }

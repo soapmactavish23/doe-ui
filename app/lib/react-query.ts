@@ -8,4 +8,5 @@ export abstract class QueryKey {
     static LOG_FIND_ALL: string = 'LOG_FIND_ALL';
     static METHODS_FIND_ALL: string = 'METHODS_FIND_ALL';
     static PATIENT_FIND_ALL: string = 'PATIENT_FIND_ALL';
+    static PATIENT_FIND_BY_ID: string = 'PATIENT_FIND_BY_ID';
 }
