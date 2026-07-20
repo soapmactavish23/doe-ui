@@ -1,3 +1,4 @@
+import { Pageable } from '@/app/api/core/pageable';
 import { Responsable } from './responsable';
 
 export interface PatientRequest {
@@ -26,6 +27,11 @@ export interface PatientResponseDetail {
     startTreatment: Date;
     url: string | null;
     responsables: Responsable[];
+}
+
+export interface PatientParam {
+    name: string;
+    pageable: Pageable;
 }
 
 export let newPatientRequest: PatientRequest = {

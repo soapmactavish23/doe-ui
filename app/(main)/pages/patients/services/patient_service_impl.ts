@@ -1,13 +1,13 @@
 import { Pageable, Page } from '@/app/api/core/pageable';
-import { PatientResponse, PatientRequest, PatientResponseDetail } from '../types/patient';
+import { PatientResponse, PatientRequest, PatientResponseDetail, PatientParam } from '../types/patient';
 import { PatientService } from './patient_service';
 import { PatientRepositoryImpl } from '../repositories/patient_repository_impl';
 
 class PatientServiceImpl implements PatientService {
     _repository = new PatientRepositoryImpl();
 
-    search(name: string, pageable: Pageable): Promise<Page<PatientResponse>> {
-        return this._repository.search(name, pageable);
+    search(dto: PatientParam): Promise<Page<PatientResponse>> {
+        return this._repository.search(dto);
     }
     create(request: PatientRequest, image: File | null): Promise<PatientResponse> {
         return this._repository.create(request, image);

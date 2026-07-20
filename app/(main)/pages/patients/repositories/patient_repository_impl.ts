@@ -1,15 +1,16 @@
+import { PatientParam } from './../types/patient';
 import { Pageable, Page } from '@/app/api/core/pageable';
 import { PatientResponse, PatientRequest, PatientResponseDetail } from '../types/patient';
 import { PatientRepository } from './patient_repository';
 import { api } from '@/app/api/core/api';
 
 export class PatientRepositoryImpl implements PatientRepository {
-    async search(name: string, pageable: Pageable): Promise<Page<PatientResponse>> {
-        const response = await api.get('paciente', {
+    async search(dto: PatientParam): Promise<Page<PatientResponse>> {
+        const response = await api.get('pacientes', {
             params: {
-                name: name,
-                page: pageable.page,
-                size: pageable.size
+                name: dto.name,
+                page: dto.pageable.page,
+                size: dto.pageable.size
             }
         });
         return response.data;

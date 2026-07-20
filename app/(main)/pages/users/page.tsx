@@ -163,11 +163,10 @@ export default function UserPage() {
 
     return (
         <div className="card">
+            <Toast ref={toast} />
             <DialogEdit visibleDialog={visibleDialog} obj={obj} onClose={handleOnClose} />
             <ConfirmDialog />
-            <Toast />
             <Fieldset legend="Gerenciamento de Usuários">
-                <Toast ref={toast} />
                 <DataTable
                     ref={dt}
                     value={list}
