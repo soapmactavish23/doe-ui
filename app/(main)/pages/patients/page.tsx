@@ -5,7 +5,7 @@ import { DataTable, DataTableFilterEvent, DataTablePageEvent } from 'primereact/
 import { Fieldset } from 'primereact/fieldset';
 import { Toast } from 'primereact/toast';
 import React, { useRef, useState } from 'react';
-import { PatientResponse } from './types/patient';
+import { PatientResponse } from './types/patient/patient_response_detail';
 import { Message } from '@/app/components/Message';
 import { DataTableFilterMeta, LazyTableState } from '@/app/api/core/pageable';
 import { QueryKey } from '@/app/lib/react-query';

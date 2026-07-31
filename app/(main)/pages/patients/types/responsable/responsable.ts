@@ -1,4 +1,5 @@
-import { Address, newAddress } from './address';
+import { AddressType, newAddress } from '../address/address_type';
+import { ResponsableType } from './responsable_type';
 
 export interface Responsable {
     id: string | null;
@@ -7,8 +8,8 @@ export interface Responsable {
     rg: string;
     cpf: string;
     localWorker: string;
-    type: 'FATHER' | 'MOTHER' | 'OTHER';
-    address: Address;
+    type: ResponsableType | null;
+    address: AddressType;
 }
 
 export let newResponsable: Responsable = {
@@ -18,6 +19,6 @@ export let newResponsable: Responsable = {
     rg: '',
     cpf: '',
     localWorker: '',
-    type: 'OTHER',
+    type: ResponsableType.OTHER,
     address: newAddress
 };

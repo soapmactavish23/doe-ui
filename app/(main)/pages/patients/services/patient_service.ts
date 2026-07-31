@@ -1,5 +1,5 @@
 import { Page, Pageable } from '@/app/api/core/pageable';
-import { PatientParam, PatientRequest, PatientResponse, PatientResponseDetail } from '../types/patient';
+import { PatientParam, PatientRequest, PatientResponse, PatientResponseDetail } from '../types/patient/patient_response_detail';
 
 export interface PatientService {
     search(dto: PatientParam): Promise<Page<PatientResponse>>;

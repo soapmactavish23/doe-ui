@@ -1,6 +1,6 @@
-import { PatientParam } from './../types/patient';
+import { PatientParam } from '../types/patient/patient_response_detail';
 import { Pageable, Page } from '@/app/api/core/pageable';
-import { PatientResponse, PatientRequest, PatientResponseDetail } from '../types/patient';
+import { PatientResponse, PatientRequest, PatientResponseDetail } from '../types/patient/patient_response_detail';
 import { PatientRepository } from './patient_repository';
 import { api } from '@/app/api/core/api';
 

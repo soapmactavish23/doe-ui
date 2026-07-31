@@ -19,7 +19,6 @@ interface DialogProps {
     visibleDialog: boolean;
     obj: User;
     onClose?: () => void;
-    onSave?: (data: User) => void;
 }
 
 const createSchema = z

@@ -1,5 +1,5 @@
 import { Pageable, Page } from '@/app/api/core/pageable';
-import { PatientResponse, PatientRequest, PatientResponseDetail, PatientParam } from '../types/patient';
+import { PatientResponse, PatientRequest, PatientResponseDetail, PatientParam } from '../types/patient/patient_response_detail';
 import { PatientService } from './patient_service';
 import { PatientRepositoryImpl } from '../repositories/patient_repository_impl';
 

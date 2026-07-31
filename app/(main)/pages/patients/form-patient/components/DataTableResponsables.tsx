@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Responsable } from '../../types/responsable';
+import { newResponsable, Responsable } from '../../types/responsable/responsable';
 import { DataTable } from 'primereact/datatable';
 import { Fieldset } from 'primereact/fieldset';
 import { Message } from '@/app/components/Message';
@@ -8,6 +8,7 @@ import { buildActionTemplate } from '@/app/components/datatable/buildActionTempl
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { confirmDelete } from '@/app/components/datatable/confirmDelete';
+import DialogResponsable from './DialogResponsable';
 
 interface DataTableResponsablesProps {
     list: Responsable[];
@@ -17,15 +18,17 @@ export default function DataTableResponsables({ list }: DataTableResponsablesPro
     const [listFiltered, setListFiltered] = useState<Responsable[]>(list);
     const dt = useRef<DataTable<Responsable[]>>(null);
     const [isSending, setIsSending] = useState<boolean>(false);
+    const [visibleDialog, setVisibleDialog] = useState<boolean>(false);
+    const [obj, setObj] = useState<Responsable>(newResponsable);
 
     const handleOpenNew = () => {
-        // setObj(newGroup);
-        // setVisibleDialog(true);
+        setObj(newResponsable);
+        setVisibleDialog(true);
     };
 
     const handleOpenEdit = (data: Responsable) => {
-        // setObj({ ...data });
-        // setVisibleDialog(true);
+        setObj({ ...data });
+        setVisibleDialog(true);
     };
 
     const handleOpenDelete = (rowData: Responsable) => {
@@ -38,9 +41,8 @@ export default function DataTableResponsables({ list }: DataTableResponsablesPro
     };
 
     const handleOnClose = () => {
-        // setVisibleDialog(false);
-        // setObj(newGroup);
-        // refetch();
+        setVisibleDialog(false);
+        setObj(newResponsable);
     };
 
     const handleOnSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,31 +52,34 @@ export default function DataTableResponsables({ list }: DataTableResponsablesPro
     };
 
     return (
-        <Fieldset legend="Responsáveis">
-            <DataTable
-                ref={dt}
-                value={listFiltered}
-                dataKey="id"
-                paginator
-                rows={10}
-                rowsPerPageOptions={[5, 10, 25]}
-                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                currentPageReportTemplate={Message.currentPageReportTemplate}
-                header={
-                    <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-                        <Button label="Novo" icon="pi pi-plus" severity="success" onClick={handleOpenNew} />
-                        <InputText type="search" placeholder="Pesquisar..." onInput={handleOnSearch} />
-                    </div>
-                }
-                loading={isSending}
-                emptyMessage={Message.empty}
-            >
-                <Column field="name" header="Nome"></Column>
-                <Column field="contact" header="Contato"></Column>
-                <Column field="type" header="Tipo"></Column>
-                <Column field="localWorker" header="Local de Trabalho"></Column>
-                <Column body={buildActionTemplate<Responsable>(handleOpenEdit, handleOpenDelete)} exportable={false} style={{ minWidth: '12rem' }}></Column>
-            </DataTable>
-        </Fieldset>
+        <>
+            <DialogResponsable visibleDialog={visibleDialog} obj={obj} onClose={handleOnClose} />
+            <Fieldset legend="Responsáveis">
+                <DataTable
+                    ref={dt}
+                    value={listFiltered}
+                    dataKey="id"
+                    paginator
+                    rows={10}
+                    rowsPerPageOptions={[5, 10, 25]}
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    currentPageReportTemplate={Message.currentPageReportTemplate}
+                    header={
+                        <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+                            <Button label="Novo" icon="pi pi-plus" severity="success" onClick={handleOpenNew} type="button" />
+                            <InputText type="search" placeholder="Pesquisar..." onInput={handleOnSearch} />
+                        </div>
+                    }
+                    loading={isSending}
+                    emptyMessage={Message.empty}
+                >
+                    <Column field="name" header="Nome"></Column>
+                    <Column field="contact" header="Contato"></Column>
+                    <Column field="type" header="Tipo"></Column>
+                    <Column field="localWorker" header="Local de Trabalho"></Column>
+                    <Column body={buildActionTemplate<Responsable>(handleOpenEdit, handleOpenDelete)} exportable={false} style={{ minWidth: '12rem' }}></Column>
+                </DataTable>
+            </Fieldset>
+        </>
     );
 }

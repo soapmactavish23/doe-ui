@@ -1,4 +1,4 @@
-export interface Address {
+export interface AddressType {
     street: string;
     complement: string;
     district: string;
@@ -7,7 +7,7 @@ export interface Address {
     zipCode: string;
 }
 
-export let newAddress: Address = {
+export let newAddress: AddressType = {
     street: '',
     complement: '',
     district: '',

@@ -11,17 +11,17 @@ import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import z from 'zod';
+import { z } from 'zod';
 
 import imgUser from '@/public/user.png';
 import { QueryKey } from '@/app/lib/react-query';
 
 import DataTableResponsables from './components/DataTableResponsables';
-import { PatientRequest, PatientResponseDetail, patientRequestSchema } from '../types/patient';
+import { PatientResponseDetail } from '../types/patient/patient_response_detail';
 import { patientService } from '../services/patient_service_impl';
-import { Responsable } from '../types/responsable';
-
-type FormPatientData = z.infer<typeof patientRequestSchema>;
+import { Responsable } from '../types/responsable/responsable';
+import { patientSchema, PatientSchemaInput, PatientSchemaOutput } from '../types/patient/patient_schema';
+import { newPatientRequest, PatientRequest } from '../types/patient/patient_request';
 
 export default function FormPatient() {
     const router = useRouter();
@@ -34,7 +34,9 @@ export default function FormPatient() {
     const patientId = Array.isArray(idParam) ? idParam[0] : idParam;
 
     const [image, setImage] = useState<File | null>(null);
+
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+
     const [responsables, setResponsables] = useState<Responsable[]>([]);
 
     const {
@@ -44,16 +46,9 @@ export default function FormPatient() {
         reset,
         setValue,
         formState: { errors, isSubmitted, isSubmitting }
-    } = useForm<FormPatientData>({
-        resolver: zodResolver(patientRequestSchema),
-        defaultValues: {
-            name: '',
-            birthDate: null,
-            sex: undefined,
-            cause: '',
-            startTreatment: null,
-            responsables: []
-        }
+    } = useForm<PatientSchemaInput, unknown, PatientSchemaOutput>({
+        resolver: zodResolver(patientSchema),
+        defaultValues: newPatientRequest
     });
 
     const {
@@ -82,13 +77,13 @@ export default function FormPatient() {
         const loadedResponsables = patient.responsables ?? [];
 
         setResponsables(loadedResponsables);
-        setImagePreview(patient.url);
+        setImagePreview(patient.url ?? null);
 
         reset({
-            name: patient.name,
+            name: patient.name ?? '',
             birthDate: parseDate(patient.birthDate),
-            sex: patient.sex,
-            cause: patient.cause,
+            sex: patient.sex ?? undefined,
+            cause: patient.cause ?? '',
             startTreatment: parseDate(patient.startTreatment),
             responsables: loadedResponsables
         });
@@ -121,10 +116,11 @@ export default function FormPatient() {
         }
 
         setImage(selectedImage);
+
         setImagePreview(URL.createObjectURL(selectedImage));
     };
 
-    const onSubmit: SubmitHandler<FormPatientData> = async (form) => {
+    const onSubmit: SubmitHandler<PatientSchemaOutput> = async (form) => {
         const request: PatientRequest = {
             id: patientId ?? null,
             name: form.name,
@@ -135,13 +131,17 @@ export default function FormPatient() {
             responsables: form.responsables
         };
 
-        if (patientId) {
-            await patientService.update(request, image);
-        } else {
-            await patientService.create(request, image);
-        }
+        try {
+            if (patientId) {
+                await patientService.update(request, image);
+            } else {
+                await patientService.create(request, image);
+            }
 
-        router.push('/pages/patients');
+            router.push('/pages/patients');
+        } catch (error) {
+            console.error('Erro ao salvar paciente:', error);
+        }
     };
 
     const handleCancel = () => {
@@ -165,7 +165,7 @@ export default function FormPatient() {
     }
 
     return (
-        <form onSubmit={handleSubmit(() => {})}>
+        <form onSubmit={handleSubmit(onSubmit)}>
             <div className="card">
                 <Fieldset legend={patientId ? 'Editar Paciente' : 'Cadastrar Paciente'}>
                     <div className="flex flex-column align-items-center justify-content-center gap-3 mb-4">
