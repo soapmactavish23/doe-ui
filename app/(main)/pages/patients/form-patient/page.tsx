@@ -1,26 +1,34 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
+
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { Fieldset } from 'primereact/fieldset';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
+
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { z } from 'zod';
 
 import imgUser from '@/public/user.png';
+
 import { QueryKey } from '@/app/lib/react-query';
 
 import DataTableResponsables from './components/DataTableResponsables';
+
 import { PatientResponseDetail } from '../types/patient/patient_response_detail';
+
 import { patientService } from '../services/patient_service_impl';
+
 import { Responsable } from '../types/responsable/responsable';
+
 import { patientSchema, PatientSchemaInput, PatientSchemaOutput } from '../types/patient/patient_schema';
+
 import { newPatientRequest, PatientRequest } from '../types/patient/patient_request';
 
 export default function FormPatient() {
@@ -69,6 +77,9 @@ export default function FormPatient() {
         enabled: Boolean(patientId)
     });
 
+    /*
+     * Popula o formulário quando o paciente é carregado.
+     */
     useEffect(() => {
         if (!patient) {
             return;
@@ -89,13 +100,23 @@ export default function FormPatient() {
         });
     }, [patient, reset]);
 
+    /*
+     * Sincroniza o estado da tabela com o React Hook Form.
+     *
+     * shouldValidate true garante que o schema valide a lista
+     * atualizada imediatamente após adicionar, editar ou remover.
+     */
     useEffect(() => {
         setValue('responsables', responsables, {
-            shouldDirty: responsables.length > 0,
-            shouldValidate: isSubmitted
+            shouldDirty: true,
+            shouldTouch: true,
+            shouldValidate: true
         });
-    }, [responsables, setValue, isSubmitted]);
+    }, [responsables, setValue]);
 
+    /*
+     * Libera a URL temporária criada para a imagem.
+     */
     useEffect(() => {
         return () => {
             if (imagePreview?.startsWith('blob:')) {
@@ -120,6 +141,10 @@ export default function FormPatient() {
         setImagePreview(URL.createObjectURL(selectedImage));
     };
 
+    const handleResponsablesChange = (updatedResponsables: Responsable[]) => {
+        setResponsables(updatedResponsables);
+    };
+
     const onSubmit: SubmitHandler<PatientSchemaOutput> = async (form) => {
         const request: PatientRequest = {
             id: patientId ?? null,
@@ -128,6 +153,11 @@ export default function FormPatient() {
             sex: form.sex,
             cause: form.cause,
             startTreatment: form.startTreatment,
+
+            /*
+             * Pode usar form.responsables porque o useEffect
+             * mantém esse campo sincronizado com o estado.
+             */
             responsables: form.responsables
         };
 
@@ -300,7 +330,7 @@ export default function FormPatient() {
                     </div>
 
                     <div className="card mt-3">
-                        <DataTableResponsables list={responsables} />
+                        <DataTableResponsables list={responsables} onChange={handleResponsablesChange} />
                     </div>
 
                     {errors.responsables?.message && <small className="p-error block mb-3">{errors.responsables.message}</small>}

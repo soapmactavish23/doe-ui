@@ -1,4 +1,5 @@
-import { AddressType, newAddress } from '../address/address_type';
+import { Address, defaultValuesAddress, newAddress } from '../address/address';
+import { FormDialogInputResponsable } from './responsable_schema';
 import { ResponsableType } from './responsable_type';
 
 export interface Responsable {
@@ -9,7 +10,7 @@ export interface Responsable {
     cpf: string;
     localWorker: string;
     type: ResponsableType | null;
-    address: AddressType;
+    address: Address;
 }
 
 export let newResponsable: Responsable = {
@@ -22,3 +23,15 @@ export let newResponsable: Responsable = {
     type: ResponsableType.OTHER,
     address: newAddress
 };
+
+export function defaultValuesResponsable(obj: Responsable | null): any {
+    return {
+        name: obj?.name ?? '',
+        contact: obj?.contact ?? '',
+        rg: obj?.rg ?? '',
+        cpf: obj?.cpf ?? '',
+        localWorker: obj?.localWorker ?? '',
+        type: obj?.type ?? ResponsableType.OTHER,
+        address: defaultValuesAddress(obj?.address ?? null)
+    };
+}
