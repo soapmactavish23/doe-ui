@@ -77,9 +77,6 @@ export default function FormPatient() {
         enabled: Boolean(patientId)
     });
 
-    /*
-     * Popula o formulário quando o paciente é carregado.
-     */
     useEffect(() => {
         if (!patient) {
             return;
@@ -153,11 +150,6 @@ export default function FormPatient() {
             sex: form.sex,
             cause: form.cause,
             startTreatment: form.startTreatment,
-
-            /*
-             * Pode usar form.responsables porque o useEffect
-             * mantém esse campo sincronizado com o estado.
-             */
             responsables: form.responsables
         };
 

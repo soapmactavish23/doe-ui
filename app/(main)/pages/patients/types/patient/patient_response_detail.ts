@@ -1,5 +1,4 @@
 import { Responsable } from '../responsable/responsable';
-import { PatientRequest } from './patient_request';
 
 export interface PatientResponseDetail {
     id: string | null;

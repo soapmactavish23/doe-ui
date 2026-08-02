@@ -1,4 +1,4 @@
-import { Group, newGroup } from '../../groups/types/group';
+import { Group, createEmptyGroup } from '../../groups/domain/group';
 
 export interface User {
     id: string | null;
@@ -40,7 +40,7 @@ export let newUser: User = {
     id: null,
     email: '',
     name: '',
-    group: newGroup,
+    group: createEmptyGroup,
     password: '',
     status: true
 };

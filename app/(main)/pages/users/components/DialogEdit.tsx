@@ -1,6 +1,6 @@
-import { Group } from '@/app/(main)/pages/groups/types/group';
+import { Group } from '@/app/(main)/pages/groups/domain/group';
 import { User } from '@/app/(main)/pages/users/types/user';
-import { groupService } from '@/app/(main)/pages/groups/services/group_service_impl';
+import { groupService } from '@/app/(main)/pages/groups/application/group_service_impl';
 import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
 import { QueryKey } from '@/app/lib/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
