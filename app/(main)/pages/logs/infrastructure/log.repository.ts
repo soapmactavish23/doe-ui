@@ -1,11 +1,13 @@
-import { api } from '../../../../api/core/api';
-import { Page } from '../../../../api/core/pageable';
-import { LogRequest, LogResponse } from '../types/log';
-import { LogRepository } from './log_respository';
+import { api } from '@/app/api/core/api';
+import { Page } from '@/app/api/core/pageable';
 
-export class LogRepositoryImpl implements LogRepository {
+import { LogRequest, LogResponse } from '../domain/log';
+
+const LOG_ENDPOINT = 'log';
+
+export const logRepository = {
     async search(request: LogRequest): Promise<Page<LogResponse>> {
-        const response = await api.get('log', {
+        const response = await api.get<Page<LogResponse>>(LOG_ENDPOINT, {
             params: {
                 userId: request.userId,
                 startDate: request.startDate,
@@ -17,9 +19,11 @@ export class LogRepositoryImpl implements LogRepository {
         });
 
         return response.data;
-    }
+    },
+
     async findMethods(): Promise<string[]> {
-        const response = await api.get('log/metodos');
+        const response = await api.get<string[]>(`${LOG_ENDPOINT}/metodos`);
+
         return response.data;
     }
-}
+};
