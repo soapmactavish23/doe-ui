@@ -1,3 +1,5 @@
+import { Pageable } from '@/app/api/core/pageable';
+
 import { Group, createEmptyGroup } from '../../groups/domain/group';
 
 export interface User {
@@ -9,26 +11,17 @@ export interface User {
     group: Group;
 }
 
-export interface EmailDTO {
+export interface UserSearchRequest {
+    name: string;
     email: string;
+    pageable: Pageable;
 }
 
-export interface AuthLoginRequest {
-    email: string;
-    password: string;
-}
-
-export interface AuthLoginResponse {
-    expires_in: number;
-    access_token: string;
-    refresh_token: string;
-}
-
-export let newUser: User = {
+export const createEmptyUser = (): User => ({
     id: null,
     email: '',
     name: '',
     group: createEmptyGroup(),
     password: '',
     status: true
-};
+});

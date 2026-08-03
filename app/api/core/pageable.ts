@@ -12,14 +12,12 @@ export interface Pageable {
 
 export interface DataTableFilter {
     value: string;
-    matchMode: 'contains' | 'equals' | 'startsWith' | 'endsWith'; // ajuste conforme suas opções reais
+    matchMode: 'contains' | 'equals' | 'startsWith' | 'endsWith';
 }
 
-export interface DataTableFilterMeta {
-    [key: string]: DataTableFilter;
-}
+export type DataTableFilterMeta = Record<string, DataTableFilter>;
 
-export interface LazyTableState<TFilters extends DataTableFilterMeta = DataTableFilterMeta> {
+export interface LazyTableState<TFilters = DataTableFilterMeta> {
     first: number;
     rows: number;
     page: number;
