@@ -1,6 +1,5 @@
 import { Group } from '@/app/(main)/pages/groups/domain/group';
 import { User } from '@/app/(main)/pages/users/types/user';
-import { groupService } from '@/app/(main)/pages/groups/application/group_service_impl';
 import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
 import { QueryKey } from '@/app/lib/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,6 +13,7 @@ import { classNames } from 'primereact/utils';
 import React, { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
+import { groupService } from '../../groups/application/group.service';
 
 interface DialogProps {
     visibleDialog: boolean;

@@ -37,9 +37,8 @@ export default function GroupDataTable({ groups, loading = false, onNew, onEdit,
     const actionTemplate = (rowData: Group) => {
         return (
             <div className="flex gap-2">
-                <Button type="button" icon="pi pi-pencil" rounded outlined aria-label={`Editar ${rowData.name}`} onClick={() => onEdit(rowData)} />
-
-                <Button type="button" icon="pi pi-trash" severity="danger" rounded outlined aria-label={`Excluir ${rowData.name}`} onClick={() => onDelete(rowData)} />
+                <Button type="button" icon="pi pi-pencil" severity="success" rounded onClick={() => onEdit(rowData)} />
+                <Button type="button" icon="pi pi-trash" severity="danger" rounded onClick={() => onDelete(rowData)} />
             </div>
         );
     };

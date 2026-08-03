@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { LazyTableState } from '@/app/api/core/pageable';
-import { buildActionTemplate } from '@/app/components/datatable/buildActionTemplate';
 import { confirmDelete } from '@/app/components/datatable/confirmDelete';
 import { FilterApply } from '@/app/components/datatable/filter-apply';
 import { FilterClear } from '@/app/components/datatable/filter-clear';
@@ -14,13 +13,12 @@ import { DataTable, DataTablePageEvent, DataTableFilterEvent } from 'primereact/
 import { Fieldset } from 'primereact/fieldset';
 import { Toast } from 'primereact/toast';
 import React, { useRef, useState } from 'react';
-
 import { useQuery } from '@tanstack/react-query';
 import { QueryKey } from '@/app/lib/react-query';
-import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
 import { newUser, User } from '@/app/(main)/pages/users/types/user';
 import { DialogEdit } from './components/DialogEdit';
 import { Tag } from 'primereact/tag';
+import { userService } from './services/user_service_impl';
 
 export default function UserPage() {
     // ################################### DATATABLE ###################################

@@ -91,15 +91,12 @@ export function useGroup() {
     return {
         groups,
         selectedGroup,
-
         dialogVisible,
         loading,
         saving,
-
         openNew,
         openEdit,
         closeDialog,
-
         save,
         remove,
         loadGroups
