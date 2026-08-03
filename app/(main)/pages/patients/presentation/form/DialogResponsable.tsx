@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { Button } from 'primereact/button';
@@ -13,17 +14,15 @@ import { InputMask } from 'primereact/inputmask';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 
-import { defaultValuesResponsable, Responsable } from '../../types/responsable/responsable';
+import { createEmptyResponsable, Responsable, ResponsableType } from '../../domain/responsable';
 
-import { ResponsableType } from '../../types/responsable/responsable_type';
+import { convertToResponsable, ResponsableFormInput, ResponsableFormOutput, responsableSchema } from './schemas/responsable.schema';
 
-import { convertToEntityResponsable, FormDialogInputResponsable, FormDialogOutputResponsable, responsableSchema } from '../../types/responsable/responsable_schema';
-
-interface DialogProps {
-    visibleDialog: boolean;
-    obj: Responsable;
-    onClose?: () => void;
-    onSave: (data: Responsable) => void;
+interface DialogResponsableProps {
+    visible: boolean;
+    responsable: Responsable;
+    onClose: () => void;
+    onSave: (responsable: Responsable) => void;
 }
 
 interface ResponsableTypeOption {
@@ -41,50 +40,67 @@ const responsableTypeOptions: ResponsableTypeOption[] = [
         value: ResponsableType.FATHER
     },
     {
+        label: 'Responsável legal',
+        value: ResponsableType.GUARDIAN
+    },
+    {
         label: 'Outro',
         value: ResponsableType.OTHER
     }
 ];
 
-export default function DialogResponsable({ visibleDialog, obj, onClose, onSave }: DialogProps) {
+function createDefaultValues(responsable: Responsable): ResponsableFormInput {
+    return {
+        id: responsable.id,
+        name: responsable.name ?? '',
+        contact: responsable.contact ?? '',
+        rg: responsable.rg ?? '',
+        cpf: responsable.cpf ?? '',
+        localWorker: responsable.localWorker ?? '',
+        type: responsable.type ?? ResponsableType.OTHER,
+
+        address: {
+            zipCode: responsable.address?.zipCode ?? '',
+            street: responsable.address?.street ?? '',
+            complement: responsable.address?.complement ?? '',
+            district: responsable.address?.district ?? '',
+            city: responsable.address?.city ?? '',
+            state: responsable.address?.state ?? ''
+        }
+    };
+}
+
+export default function DialogResponsable({ visible, responsable, onClose, onSave }: DialogResponsableProps) {
     const {
         register,
         handleSubmit,
         control,
         reset,
         formState: { errors, isSubmitted, isSubmitting }
-    } = useForm<FormDialogInputResponsable, unknown, FormDialogOutputResponsable>({
+    } = useForm<ResponsableFormInput, unknown, ResponsableFormOutput>({
         resolver: zodResolver(responsableSchema),
-        defaultValues: defaultValuesResponsable(obj)
+
+        defaultValues: createDefaultValues(responsable)
     });
 
-    /*
-     * Sempre que o diálogo abrir ou o objeto selecionado mudar,
-     * o formulário recebe os dados atuais.
-     */
     useEffect(() => {
-        if (!visibleDialog) {
+        if (!visible) {
             return;
         }
 
-        reset(defaultValuesResponsable(obj));
-    }, [visibleDialog, obj, reset]);
+        reset(createDefaultValues(responsable));
+    }, [visible, responsable, reset]);
 
     const handleCancel = () => {
-        reset(defaultValuesResponsable(obj));
-        onClose?.();
+        reset(createDefaultValues(createEmptyResponsable()));
+
+        onClose();
     };
 
-    const handleSave: SubmitHandler<FormDialogOutputResponsable> = (formData) => {
-        const responsable = convertToEntityResponsable(formData);
-
-        /*
-         * Preserva o ID quando estiver editando um responsável
-         * que já existe no backend.
-         */
+    const handleSave: SubmitHandler<ResponsableFormOutput> = (form) => {
         onSave({
-            ...responsable,
-            id: obj.id ?? responsable.id ?? null
+            ...convertToResponsable(form),
+            id: responsable.id ?? form.id ?? null
         });
     };
 
@@ -92,14 +108,14 @@ export default function DialogResponsable({ visibleDialog, obj, onClose, onSave 
         <div className="flex justify-content-end gap-2">
             <Button type="button" label="Cancelar" icon="pi pi-times" severity="secondary" outlined disabled={isSubmitting} onClick={handleCancel} />
 
-            <Button type="submit" label="Enviar" icon="pi pi-check" form="form-responsable" loading={isSubmitting} />
+            <Button type="submit" label="Enviar" icon="pi pi-check" form="responsable-form" loading={isSubmitting} />
         </div>
     );
 
     return (
         <Dialog
-            visible={visibleDialog}
-            header={obj.id ? 'Editar Responsável' : 'Cadastrar Responsável'}
+            visible={visible}
+            header={responsable.id ? 'Editar Responsável' : 'Cadastrar Responsável'}
             modal
             draggable={false}
             dismissableMask={false}
@@ -116,14 +132,14 @@ export default function DialogResponsable({ visibleDialog, obj, onClose, onSave 
             footer={footer}
             onHide={handleCancel}
         >
-            <form id="form-responsable" onSubmit={handleSubmit(handleSave)}>
+            <form id="responsable-form" onSubmit={handleSubmit(handleSave)}>
                 <Fieldset legend="Dados Pessoais" className="mb-4">
                     <div className="grid">
                         <div className="col-12 md:col-4 field">
-                            <label htmlFor="name">Nome</label>
+                            <label htmlFor="responsable-name">Nome</label>
 
                             <InputText
-                                id="name"
+                                id="responsable-name"
                                 placeholder="Digite o nome"
                                 {...register('name')}
                                 className={classNames({
@@ -143,14 +159,11 @@ export default function DialogResponsable({ visibleDialog, obj, onClose, onSave 
                                 render={({ field }) => (
                                     <InputMask
                                         id={field.name}
-                                        name={field.name}
                                         value={field.value ?? ''}
                                         mask="(99) 99999-9999"
                                         placeholder="(xx) xxxxx-xxxx"
                                         autoClear={false}
-                                        onChange={(event) => {
-                                            field.onChange(event.value ?? '');
-                                        }}
+                                        onChange={(event) => field.onChange(event.value ?? '')}
                                         onBlur={field.onBlur}
                                         className={classNames({
                                             'p-invalid': isSubmitted && errors.contact
@@ -186,14 +199,11 @@ export default function DialogResponsable({ visibleDialog, obj, onClose, onSave 
                                 render={({ field }) => (
                                     <InputMask
                                         id={field.name}
-                                        name={field.name}
                                         value={field.value ?? ''}
                                         mask="999.999.999-99"
                                         placeholder="Digite o CPF"
                                         autoClear={false}
-                                        onChange={(event) => {
-                                            field.onChange(event.value ?? '');
-                                        }}
+                                        onChange={(event) => field.onChange(event.value ?? '')}
                                         onBlur={field.onBlur}
                                         className={classNames({
                                             'p-invalid': isSubmitted && errors.cpf
@@ -229,15 +239,12 @@ export default function DialogResponsable({ visibleDialog, obj, onClose, onSave 
                                 render={({ field }) => (
                                     <Dropdown
                                         id={field.name}
-                                        name={field.name}
                                         value={field.value}
                                         options={responsableTypeOptions}
                                         optionLabel="label"
                                         optionValue="value"
                                         placeholder="Selecione o tipo de vínculo"
-                                        onChange={(event) => {
-                                            field.onChange(event.value);
-                                        }}
+                                        onChange={(event) => field.onChange(event.value)}
                                         onBlur={field.onBlur}
                                         className={classNames({
                                             'p-invalid': isSubmitted && errors.type
@@ -262,14 +269,11 @@ export default function DialogResponsable({ visibleDialog, obj, onClose, onSave 
                                 render={({ field }) => (
                                     <InputMask
                                         id={field.name}
-                                        name={field.name}
                                         value={field.value ?? ''}
                                         mask="99999-999"
                                         placeholder="Digite o CEP"
                                         autoClear={false}
-                                        onChange={(event) => {
-                                            field.onChange(event.value ?? '');
-                                        }}
+                                        onChange={(event) => field.onChange(event.value ?? '')}
                                         onBlur={field.onBlur}
                                         className={classNames({
                                             'p-invalid': isSubmitted && errors.address?.zipCode
@@ -314,16 +318,7 @@ export default function DialogResponsable({ visibleDialog, obj, onClose, onSave 
                         <div className="col-12 md:col-8 field">
                             <label htmlFor="address.complement">Complemento</label>
 
-                            <InputText
-                                id="address.complement"
-                                placeholder="Digite o complemento"
-                                {...register('address.complement')}
-                                className={classNames({
-                                    'p-invalid': isSubmitted && errors.address?.complement
-                                })}
-                            />
-
-                            {errors.address?.complement?.message && <small className="p-error">{errors.address.complement.message}</small>}
+                            <InputText id="address.complement" placeholder="Digite o complemento" {...register('address.complement')} />
                         </div>
 
                         <div className="col-12 md:col-8 field">
@@ -349,9 +344,6 @@ export default function DialogResponsable({ visibleDialog, obj, onClose, onSave 
                                 placeholder="Digite a UF"
                                 maxLength={2}
                                 {...register('address.state')}
-                                onInput={(event) => {
-                                    event.currentTarget.value = event.currentTarget.value.toUpperCase();
-                                }}
                                 className={classNames({
                                     'p-invalid': isSubmitted && errors.address?.state
                                 })}

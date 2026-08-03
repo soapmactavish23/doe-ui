@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { Responsable } from '../responsable/responsable';
+
+import { Responsable } from '../../../domain/responsable';
 
 export const patientSchema = z.object({
     name: z.string().trim().min(3, 'Nome deve ter no mínimo 3 caracteres'),
@@ -54,5 +55,6 @@ export const patientSchema = z.object({
     responsables: z.array(z.custom<Responsable>()).min(1, 'Informe pelo menos um responsável')
 });
 
-export type PatientSchemaInput = z.input<typeof patientSchema>;
-export type PatientSchemaOutput = z.output<typeof patientSchema>;
+export type PatientFormInput = z.input<typeof patientSchema>;
+
+export type PatientFormOutput = z.output<typeof patientSchema>;

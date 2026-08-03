@@ -6,11 +6,10 @@ import { useQuery } from '@tanstack/react-query';
 
 import { QueryKey } from '@/app/lib/react-query';
 
-import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
-
 import { createInitialLogFilters, LogFilters, LogResponse, LogUser } from '../domain/log';
 
 import { logService } from './log.service';
+import { userService } from '../../users/application/user.service';
 
 export function useLogs() {
     const [logs, setLogs] = useState<LogResponse[]>([]);

@@ -1,7 +1,7 @@
 'use client';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
+import { userService } from '../(main)/pages/users/application/user.service';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -82,10 +82,10 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
             }
 
             try {
-                const data = await userService.refreshToken(refresh);
+                //const data = await userService.refreshToken(refresh);
 
-                localStorage.setItem('access_token', data.access_token);
-                localStorage.setItem('refresh_token', data.refresh_token);
+                // localStorage.setItem('access_token', data.access_token);
+                // localStorage.setItem('refresh_token', data.refresh_token);
 
                 setLoading(false);
             } catch (e) {

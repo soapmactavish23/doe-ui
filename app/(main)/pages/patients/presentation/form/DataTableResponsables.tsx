@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, useMemo, useRef, useState } from 'react';
 
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
@@ -12,7 +12,7 @@ import { Message } from '@/app/components/Message';
 import { buildActionTemplate } from '@/app/components/datatable/buildActionTemplate';
 import { confirmDelete } from '@/app/components/datatable/confirmDelete';
 
-import { newResponsable, Responsable } from '../../types/responsable/responsable';
+import { cloneResponsable, createEmptyResponsable, Responsable } from '../../domain/responsable';
 
 import DialogResponsable from './DialogResponsable';
 
@@ -21,90 +21,58 @@ interface DataTableResponsablesProps {
     onChange: (list: Responsable[]) => void;
 }
 
-function cloneResponsable(responsable: Responsable): Responsable {
-    return {
-        ...responsable,
-        address: {
-            ...responsable.address
-        }
-    };
-}
-
 export default function DataTableResponsables({ list, onChange }: DataTableResponsablesProps) {
     const dt = useRef<DataTable<Responsable[]>>(null);
 
-    const [isSending] = useState(false);
-
     const [visibleDialog, setVisibleDialog] = useState(false);
 
-    const [obj, setObj] = useState<Responsable>(cloneResponsable(newResponsable));
+    const [selectedResponsable, setSelectedResponsable] = useState<Responsable>(createEmptyResponsable());
 
-    /*
-     * Como os responsáveis novos podem não possuir ID,
-     * guardamos o índice selecionado para realizar a edição.
-     */
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
     const [search, setSearch] = useState('');
 
-    /*
-     * A lista filtrada é derivada da propriedade list.
-     * Não é necessário manter uma segunda lista em useState.
-     */
-    const listFiltered = useMemo(() => {
+    const filteredList = useMemo(() => {
         const normalizedSearch = search.trim().toLowerCase();
 
         if (!normalizedSearch) {
             return list;
         }
 
-        return list.filter((responsable) => {
-            return responsable.name.toLowerCase().includes(normalizedSearch);
-        });
+        return list.filter((responsable) => responsable.name.toLowerCase().includes(normalizedSearch));
     }, [list, search]);
-
-    /*
-     * Caso a lista seja recarregada, fecha qualquer edição
-     * que esteja apontando para um índice inexistente.
-     */
-    useEffect(() => {
-        if (editingIndex !== null && editingIndex >= list.length) {
-            setEditingIndex(null);
-            setVisibleDialog(false);
-        }
-    }, [list.length, editingIndex]);
 
     const handleOpenNew = () => {
         setEditingIndex(null);
-        setObj(cloneResponsable(newResponsable));
+
+        setSelectedResponsable(createEmptyResponsable());
+
         setVisibleDialog(true);
     };
 
-    const handleOpenEdit = (rowData: Responsable) => {
-        /*
-         * A tabela filtrada mantém as mesmas referências dos
-         * elementos presentes na lista original.
-         */
-        const index = list.findIndex((responsable) => responsable === rowData);
+    const handleOpenEdit = (responsable: Responsable) => {
+        const index = list.indexOf(responsable);
 
         if (index < 0) {
             return;
         }
 
         setEditingIndex(index);
-        setObj(cloneResponsable(rowData));
+
+        setSelectedResponsable(cloneResponsable(responsable));
+
         setVisibleDialog(true);
     };
 
-    const handleOpenDelete = (rowData: Responsable) => {
-        const index = list.findIndex((responsable) => responsable === rowData);
+    const handleOpenDelete = (responsable: Responsable) => {
+        const index = list.indexOf(responsable);
 
         if (index < 0) {
             return;
         }
 
         confirmDelete({
-            name: rowData.name,
+            name: responsable.name,
             onAccept: () => {
                 const updatedList = list.filter((_, currentIndex) => currentIndex !== index);
 
@@ -113,63 +81,48 @@ export default function DataTableResponsables({ list, onChange }: DataTableRespo
         });
     };
 
-    const handleOnClose = () => {
+    const handleCloseDialog = () => {
         setVisibleDialog(false);
         setEditingIndex(null);
-        setObj(cloneResponsable(newResponsable));
+
+        setSelectedResponsable(createEmptyResponsable());
     };
 
-    const handleOnSearch = (event: ChangeEvent<HTMLInputElement>) => {
-        setSearch(event.target.value);
-    };
+    const handleSave = (responsable: Responsable) => {
+        if (editingIndex === null) {
+            const updatedList = [...list, cloneResponsable(responsable)];
 
-    const handleOnSave = (responsable: Responsable) => {
-        let updatedList: Responsable[];
-
-        if (editingIndex !== null) {
-            updatedList = list.map((currentResponsable, index) => {
+            onChange(updatedList);
+        } else {
+            const updatedList = list.map((currentResponsable, index) => {
                 if (index !== editingIndex) {
                     return currentResponsable;
                 }
 
                 return cloneResponsable({
                     ...responsable,
-
-                    /*
-                     * Mantém o ID original na edição.
-                     */
                     id: list[editingIndex].id ?? responsable.id ?? null
                 });
             });
-        } else {
-            updatedList = [
-                ...list,
-                cloneResponsable({
-                    ...responsable,
-                    id: responsable.id ?? null
-                })
-            ];
+
+            onChange(updatedList);
         }
 
-        /*
-         * Atualiza o estado do FormPatient.
-         */
-        onChange(updatedList);
+        handleCloseDialog();
+    };
 
-        /*
-         * Fecha e limpa o diálogo após adicionar ou editar.
-         */
-        handleOnClose();
+    const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
+        setSearch(event.target.value);
     };
 
     return (
         <>
-            <DialogResponsable visibleDialog={visibleDialog} obj={obj} onClose={handleOnClose} onSave={handleOnSave} />
+            <DialogResponsable visible={visibleDialog} responsable={selectedResponsable} onClose={handleCloseDialog} onSave={handleSave} />
 
             <Fieldset legend="Responsáveis">
                 <DataTable
                     ref={dt}
-                    value={listFiltered}
+                    value={filteredList}
                     paginator
                     rows={10}
                     rowsPerPageOptions={[5, 10, 25]}
@@ -179,10 +132,9 @@ export default function DataTableResponsables({ list, onChange }: DataTableRespo
                         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
                             <Button type="button" label="Novo" icon="pi pi-plus" severity="success" onClick={handleOpenNew} />
 
-                            <InputText type="search" value={search} placeholder="Pesquisar..." onChange={handleOnSearch} />
+                            <InputText type="search" value={search} placeholder="Pesquisar..." onChange={handleSearch} />
                         </div>
                     }
-                    loading={isSending}
                     emptyMessage={Message.empty}
                 >
                     <Column field="name" header="Nome" />
