@@ -85,7 +85,7 @@ const AppMenu = () => {
 
     return (
         <MenuProvider>
-            {loading && <LoadingContent />}
+            {loading && <LoadingContent visible />}
 
             <ul className="layout-menu" onClickCapture={onMenuClickCapture}>
                 {model.map((item, i) => (!item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator" key={`sep-${i}`}></li>))}
