@@ -1,6 +1,6 @@
 import { api, apiUnAuth } from '../../../../api/core/api';
 import { Page, Pageable } from '../../../../api/core/pageable';
-import { AuthLoginRequest, AuthLoginResponse, PasswordDTO, ProfileDTO, User } from '../types/user';
+import { AuthLoginRequest, AuthLoginResponse, PasswordDTO, ProfileDTO, User } from '../domain/user';
 import { UserRepository } from './user_repository';
 export class UserRepositoryImpl implements UserRepository {
     async recoveryPassword(email: string) {

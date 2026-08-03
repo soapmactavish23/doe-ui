@@ -1,6 +1,6 @@
 import { CrudTemplate } from '../../../../api/core/crud';
 import { Page, Pageable } from '../../../../api/core/pageable';
-import { AuthLoginRequest, AuthLoginResponse, PasswordDTO, ProfileDTO, User } from '../types/user';
+import { AuthLoginRequest, AuthLoginResponse, PasswordDTO, ProfileDTO, User } from '../domain/user';
 
 export interface UserRepository extends CrudTemplate<User> {
     search(name: string, email: string, pageable: Pageable): Promise<Page<User>>;

@@ -9,18 +9,6 @@ export interface User {
     group: Group;
 }
 
-export interface PasswordDTO {
-    code: string;
-    password: string;
-    confirmPassword: string;
-    newPassword: string;
-}
-
-export interface ProfileDTO {
-    id: string;
-    name: string;
-}
-
 export interface EmailDTO {
     email: string;
 }
@@ -40,7 +28,7 @@ export let newUser: User = {
     id: null,
     email: '',
     name: '',
-    group: createEmptyGroup,
+    group: createEmptyGroup(),
     password: '',
     status: true
 };

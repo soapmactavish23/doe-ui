@@ -2,7 +2,7 @@
 'use client';
 import { DataTableFilterMeta, LazyTableState } from '@/app/api/core/pageable';
 import { LogResponse } from '@/app/(main)/pages/logs/types/log';
-import { User } from '@/app/(main)/pages/users/types/user';
+import { User } from '@/app/(main)/pages/users/domain/user';
 import { logService } from '@/app/(main)/pages/logs/services/log_service_impl';
 import { userService } from '@/app/(main)/pages/users/services/user_service_impl';
 import { FilterApply } from '@/app/components/datatable/filter-apply';

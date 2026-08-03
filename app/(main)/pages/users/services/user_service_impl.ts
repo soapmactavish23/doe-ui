@@ -1,5 +1,5 @@
 import { Page } from '../../../../api/core/pageable';
-import { User, PasswordDTO, ProfileDTO, AuthLoginRequest, AuthLoginResponse } from '../types/user';
+import { User, PasswordDTO, ProfileDTO, AuthLoginRequest, AuthLoginResponse } from '../domain/user';
 import { UserRepositoryImpl } from '../repositories/user_repository_impl';
 import { SearchDTO, UserService } from './user_service';
 

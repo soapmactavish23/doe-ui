@@ -1,4 +1,4 @@
-import { User } from '../(main)/pages/users/types/user';
+import { User } from '../(main)/pages/users/domain/user';
 import { userService } from '../(main)/pages/users/services/user_service_impl';
 import { decodeToken } from '../api/core/api';
 

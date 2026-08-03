@@ -15,7 +15,7 @@ import { Toast } from 'primereact/toast';
 import React, { useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { QueryKey } from '@/app/lib/react-query';
-import { newUser, User } from '@/app/(main)/pages/users/types/user';
+import { newUser, User } from '@/app/(main)/pages/users/domain/user';
 import { DialogEdit } from './components/DialogEdit';
 import { Tag } from 'primereact/tag';
 import { userService } from './services/user_service_impl';

@@ -1,5 +1,5 @@
 import { Pageable } from '../../../../api/core/pageable';
-import { User } from '../../users/types/user';
+import { User } from '../../users/domain/user';
 
 export interface LogResponse {
     id: number;
