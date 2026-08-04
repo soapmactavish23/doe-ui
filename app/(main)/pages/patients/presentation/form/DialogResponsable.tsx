@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -17,6 +17,7 @@ import { classNames } from 'primereact/utils';
 import { createEmptyResponsable, Responsable, ResponsableType } from '../../domain/responsable';
 
 import { convertToResponsable, ResponsableFormInput, ResponsableFormOutput, responsableSchema } from './schemas/responsable.schema';
+import { ViaCepResponse } from '../../domain/address';
 
 interface DialogResponsableProps {
     visible: boolean;
@@ -58,14 +59,14 @@ function createDefaultValues(responsable: Responsable): ResponsableFormInput {
         cpf: responsable.cpf ?? '',
         localWorker: responsable.localWorker ?? '',
         type: responsable.type ?? ResponsableType.OTHER,
-
         address: {
             zipCode: responsable.address?.zipCode ?? '',
             street: responsable.address?.street ?? '',
             complement: responsable.address?.complement ?? '',
             district: responsable.address?.district ?? '',
             city: responsable.address?.city ?? '',
-            state: responsable.address?.state ?? ''
+            state: responsable.address?.state ?? '',
+            number: responsable.address?.number ?? ''
         }
     };
 }
@@ -76,12 +77,86 @@ export default function DialogResponsable({ visible, responsable, onClose, onSav
         handleSubmit,
         control,
         reset,
+        setValue,
+        setError,
+        clearErrors,
         formState: { errors, isSubmitted, isSubmitting }
     } = useForm<ResponsableFormInput, unknown, ResponsableFormOutput>({
         resolver: zodResolver(responsableSchema),
-
         defaultValues: createDefaultValues(responsable)
     });
+
+    const [isSearchingZipCode, setIsSearchingZipCode] = useState(false);
+
+    const clearAddressFields = () => {
+        setValue('address.street', '');
+        setValue('address.district', '');
+        setValue('address.city', '');
+        setValue('address.state', '');
+    };
+
+    const searchZipCode = async (zipCodeValue: string) => {
+        const zipCode = zipCodeValue.replace(/\D/g, '');
+
+        if (zipCode.length !== 8) {
+            return;
+        }
+
+        try {
+            setIsSearchingZipCode(true);
+            clearErrors('address.zipCode');
+
+            const response = await fetch(`https://viacep.com.br/ws/${zipCode}/json/`);
+
+            if (!response.ok) {
+                throw new Error('Não foi possível consultar o CEP.');
+            }
+
+            const address: ViaCepResponse = await response.json();
+
+            if (address.erro) {
+                clearAddressFields();
+
+                setError('address.zipCode', {
+                    type: 'manual',
+                    message: 'CEP não encontrado.'
+                });
+
+                return;
+            }
+
+            setValue('address.street', address.logradouro ?? '', {
+                shouldValidate: true,
+                shouldDirty: true
+            });
+
+            setValue('address.district', address.bairro ?? '', {
+                shouldValidate: true,
+                shouldDirty: true
+            });
+
+            setValue('address.city', address.localidade ?? '', {
+                shouldValidate: true,
+                shouldDirty: true
+            });
+
+            setValue('address.state', address.uf ?? '', {
+                shouldValidate: true,
+                shouldDirty: true
+            });
+
+            window.setTimeout(() => {
+                document.getElementById('address.number')?.focus();
+            }, 0);
+        } catch {
+            setError('address.zipCode', {
+                type: 'manual',
+                message: 'Não foi possível consultar o CEP.'
+            });
+        } finally {
+            setIsSearchingZipCode(false);
+        }
+    };
 
     useEffect(() => {
         if (!visible) {
@@ -267,25 +342,51 @@ export default function DialogResponsable({ visible, responsable, onClose, onSav
                                 name="address.zipCode"
                                 control={control}
                                 render={({ field }) => (
-                                    <InputMask
-                                        id={field.name}
-                                        value={field.value ?? ''}
-                                        mask="99999-999"
-                                        placeholder="Digite o CEP"
-                                        autoClear={false}
-                                        onChange={(event) => field.onChange(event.value ?? '')}
-                                        onBlur={field.onBlur}
-                                        className={classNames({
-                                            'p-invalid': isSubmitted && errors.address?.zipCode
-                                        })}
-                                    />
+                                    <div className="p-inputgroup">
+                                        <InputMask
+                                            id={field.name}
+                                            value={field.value ?? ''}
+                                            mask="99999-999"
+                                            placeholder="Digite o CEP"
+                                            autoClear={false}
+                                            disabled={isSearchingZipCode}
+                                            onChange={(event) => {
+                                                const value = event.value ?? '';
+
+                                                field.onChange(value);
+                                                clearErrors('address.zipCode');
+
+                                                const numericZipCode = value.replace(/\D/g, '');
+
+                                                if (numericZipCode.length === 8) {
+                                                    void searchZipCode(value);
+                                                }
+                                            }}
+                                            onBlur={(event) => {
+                                                field.onBlur();
+                                                void searchZipCode(event.target.value);
+                                            }}
+                                            className={classNames({
+                                                'p-invalid': errors.address?.zipCode
+                                            })}
+                                        />
+
+                                        <Button
+                                            type="button"
+                                            icon={isSearchingZipCode ? 'pi pi-spin pi-spinner' : 'pi pi-search'}
+                                            loading={isSearchingZipCode}
+                                            disabled={isSearchingZipCode}
+                                            aria-label="Consultar CEP"
+                                            onClick={() => void searchZipCode(field.value ?? '')}
+                                        />
+                                    </div>
                                 )}
                             />
 
                             {errors.address?.zipCode?.message && <small className="p-error">{errors.address.zipCode.message}</small>}
                         </div>
 
-                        <div className="col-12 md:col-9 field">
+                        <div className="col-12 md:col-7 field">
                             <label htmlFor="address.street">Endereço</label>
 
                             <InputText
@@ -298,6 +399,21 @@ export default function DialogResponsable({ visible, responsable, onClose, onSav
                             />
 
                             {errors.address?.street?.message && <small className="p-error">{errors.address.street.message}</small>}
+                        </div>
+
+                        <div className="col-12 md:col-2 field">
+                            <label htmlFor="address.number">Número</label>
+
+                            <InputText
+                                id="address.number"
+                                placeholder="Digite o número"
+                                {...register('address.number')}
+                                className={classNames({
+                                    'p-invalid': isSubmitted && errors.address?.number
+                                })}
+                            />
+
+                            {errors.address?.number?.message && <small className="p-error">{errors.address.number.message}</small>}
                         </div>
 
                         <div className="col-12 md:col-4 field">

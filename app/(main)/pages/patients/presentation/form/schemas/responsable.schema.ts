@@ -54,7 +54,8 @@ export function convertToResponsable(data: ResponsableFormOutput): Responsable {
             complement: data.address.complement ?? '',
             district: data.address.district,
             city: data.address.city,
-            state: data.address.state
+            state: data.address.state,
+            number: data.address.number
         }
     };
 }

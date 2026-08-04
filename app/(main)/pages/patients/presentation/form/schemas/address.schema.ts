@@ -10,7 +10,7 @@ export const addressSchema = z.object({
     district: z.string().trim().min(1, 'Bairro é obrigatório'),
 
     city: z.string().trim().min(1, 'Cidade é obrigatória'),
-
+    number: z.string().trim().min(1, 'Número é obrigatório'),
     state: z
         .string()
         .trim()

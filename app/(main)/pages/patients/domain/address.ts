@@ -5,6 +5,7 @@ export interface Address {
     city: string;
     state: string;
     zipCode: string;
+    number: string;
 }
 
 export const createEmptyAddress = (): Address => ({
@@ -13,5 +14,16 @@ export const createEmptyAddress = (): Address => ({
     district: '',
     city: '',
     state: '',
-    zipCode: ''
+    zipCode: '',
+    number: ''
 });
+
+export interface ViaCepResponse {
+    cep: string;
+    logradouro: string;
+    complemento: string;
+    bairro: string;
+    localidade: string;
+    uf: string;
+    erro?: boolean;
+}
