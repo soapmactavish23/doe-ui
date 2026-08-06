@@ -9,4 +9,6 @@ export abstract class QueryKey {
     static METHODS_FIND_ALL: string = 'METHODS_FIND_ALL';
     static PATIENT_FIND_ALL: string = 'PATIENT_FIND_ALL';
     static PATIENT_FIND_BY_ID: string = 'PATIENT_FIND_BY_ID';
+    static DASHBOARD_COUNT_AGE: string = 'DASHBOARD_COUNT_AGE';
+    static DASHBOARD_COUNT_TYPE: string = 'DASHBOARD_COUNT_TYPE';
 }
