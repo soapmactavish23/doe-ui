@@ -1,6 +1,6 @@
 'use client';
 
-import { confirmDialog } from 'primereact/confirmdialog';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
 import { useGroup } from './application/useGroup';
 
@@ -8,9 +8,10 @@ import GroupDataTable from './presentation/GroupDataTable';
 import GroupDialog from './presentation/GroupDialog';
 
 import { Group } from './domain/group';
+import { Toast } from 'primereact/toast';
 
 export default function GroupsPage() {
-    const { groups, selectedGroup, dialogVisible, loading, saving, openNew, openEdit, closeDialog, save, remove } = useGroup();
+    const { groups, selectedGroup, dialogVisible, loading, saving, openNew, openEdit, closeDialog, save, remove, toast } = useGroup();
 
     const handleDelete = (group: Group) => {
         confirmDialog({
@@ -28,6 +29,8 @@ export default function GroupsPage() {
 
     return (
         <div className="card">
+            <ConfirmDialog />
+            <Toast ref={toast} />
             <GroupDialog visible={dialogVisible} group={selectedGroup} loading={saving} onSave={save} onClose={closeDialog} />
             <GroupDataTable groups={groups} loading={loading} onNew={openNew} onEdit={openEdit} onDelete={handleDelete} />
         </div>

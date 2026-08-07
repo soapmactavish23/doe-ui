@@ -21,6 +21,7 @@ import { usePatientForm } from '../../application/usePatientForm';
 
 import { PatientFormInput, PatientFormOutput, patientSchema } from './schemas/patient.schema';
 import DataTableResponsables from './DataTableResponsables';
+import { Toast } from 'primereact/toast';
 
 export default function PatientForm() {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -28,7 +29,7 @@ export default function PatientForm() {
     const {
         patientId,
         patient,
-
+        toast,
         imagePreview,
         responsables,
         setResponsables,
@@ -121,6 +122,7 @@ export default function PatientForm() {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
+            <Toast ref={toast} />
             <div className="card">
                 <Fieldset legend={patientId ? 'Editar Paciente' : 'Cadastrar Paciente'}>
                     <div className="flex flex-column align-items-center justify-content-center gap-3 mb-4">

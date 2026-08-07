@@ -38,7 +38,15 @@ export default function GroupDataTable({ groups, loading = false, onNew, onEdit,
         return (
             <div className="flex gap-2">
                 <Button type="button" icon="pi pi-pencil" severity="success" rounded onClick={() => onEdit(rowData)} />
-                <Button type="button" icon="pi pi-trash" severity="danger" rounded onClick={() => onDelete(rowData)} />
+                <Button
+                    type="button"
+                    icon="pi pi-trash"
+                    severity="danger"
+                    rounded
+                    onClick={() => {
+                        onDelete(rowData);
+                    }}
+                />
             </div>
         );
     };

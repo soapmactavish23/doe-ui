@@ -1,13 +1,19 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { Toast } from 'primereact/toast';
+
+import { Message } from '@/app/components/Message';
 
 import { Group, createEmptyGroup } from '../domain/group';
 import { groupService } from './group.service';
 
 export function useGroup() {
+    const toast = useRef<Toast>(null);
+
     const [groups, setGroups] = useState<Group[]>([]);
-    const [selectedGroup, setSelectedGroup] = useState<Group>(createEmptyGroup());
+    const [selectedGroup, setSelectedGroup] = useState(createEmptyGroup());
 
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -22,7 +28,13 @@ export function useGroup() {
             setGroups(result);
         } catch (error) {
             console.error('Erro ao carregar grupos:', error);
-            throw error;
+
+            toast.current?.show({
+                severity: 'error',
+                summary: Message.errorMsg,
+                detail: Message.errorLoad,
+                life: 5000
+            });
         } finally {
             setLoading(false);
         }
@@ -60,11 +72,24 @@ export function useGroup() {
                 await groupService.create(group);
             }
 
+            toast.current?.show({
+                severity: 'success',
+                summary: Message.successMsg,
+                detail: Message.successSave,
+                life: 3000
+            });
+
             closeDialog();
             await loadGroups();
         } catch (error) {
             console.error('Erro ao salvar grupo:', error);
-            throw error;
+
+            toast.current?.show({
+                severity: 'error',
+                summary: Message.errorMsg,
+                detail: Message.errorSave,
+                life: 5000
+            });
         } finally {
             setSaving(false);
         }
@@ -72,17 +97,38 @@ export function useGroup() {
 
     const remove = async (group: Group) => {
         if (!group.id) {
-            throw new Error('Não foi possível excluir: grupo sem identificador');
+            toast.current?.show({
+                severity: 'error',
+                summary: Message.errorMsg,
+                detail: 'Não foi possível excluir o grupo.',
+                life: 5000
+            });
+
+            return;
         }
 
         try {
             setLoading(true);
 
             await groupService.remove(group.id);
+
+            toast.current?.show({
+                severity: 'success',
+                summary: Message.successMsg,
+                detail: Message.successDelete,
+                life: 3000
+            });
+
             await loadGroups();
         } catch (error) {
             console.error('Erro ao excluir grupo:', error);
-            throw error;
+
+            toast.current?.show({
+                severity: 'error',
+                summary: Message.errorMsg,
+                detail: Message.errorDelete,
+                life: 5000
+            });
         } finally {
             setLoading(false);
         }
@@ -91,12 +137,17 @@ export function useGroup() {
     return {
         groups,
         selectedGroup,
+
         dialogVisible,
         loading,
         saving,
+
+        toast,
+
         openNew,
         openEdit,
         closeDialog,
+
         save,
         remove,
         loadGroups

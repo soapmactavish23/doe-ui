@@ -4,7 +4,6 @@ import { Responsable } from '../../../domain/responsable';
 
 export const patientSchema = z.object({
     name: z.string().trim().min(3, 'Nome deve ter no mínimo 3 caracteres'),
-
     birthDate: z
         .date({
             error: (issue) => {
@@ -19,7 +18,6 @@ export const patientSchema = z.object({
         .refine((value) => value !== null, {
             message: 'A data de nascimento é obrigatória'
         }),
-
     sex: z
         .enum(['MALE', 'FEMALE'], {
             error: (issue) => {
@@ -34,9 +32,7 @@ export const patientSchema = z.object({
         .refine((value) => value !== null, {
             message: 'O sexo é obrigatório'
         }),
-
     cause: z.string().trim().min(3, 'A causa deve ter no mínimo 3 caracteres'),
-
     startTreatment: z
         .date({
             error: (issue) => {
@@ -51,8 +47,7 @@ export const patientSchema = z.object({
         .refine((value) => value !== null, {
             message: 'A data de início do tratamento é obrigatória'
         }),
-
-    responsables: z.array(z.custom<Responsable>()).min(1, 'Informe pelo menos um responsável')
+    responsables: z.array(z.custom<Responsable>())
 });
 
 export type PatientFormInput = z.input<typeof patientSchema>;
