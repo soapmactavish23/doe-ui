@@ -63,15 +63,10 @@ export default function PatientForm() {
 
         reset({
             name: patient.name ?? '',
-
             birthDate: parseDate(patient.birthDate),
-
             sex: patient.sex ?? null,
-
             cause: patient.cause ?? '',
-
             startTreatment: parseDate(patient.startTreatment),
-
             responsables: patient.responsables ?? []
         });
     }, [patient, reset]);
@@ -87,17 +82,11 @@ export default function PatientForm() {
     const onSubmit: SubmitHandler<PatientFormOutput> = async (form) => {
         const request: PatientRequest = {
             id: patientId ?? null,
-
             name: form.name,
-
             birthDate: form.birthDate,
-
             sex: form.sex ?? undefined,
-
             cause: form.cause,
-
             startTreatment: form.startTreatment,
-
             responsables: form.responsables
         };
 
@@ -163,15 +152,23 @@ export default function PatientForm() {
                         <div className="col-12 md:col-4 field">
                             <label htmlFor="birthDate">Data de Nascimento</label>
 
-                            <InputText
-                                id="birthDate"
-                                type="date"
-                                {...register('birthDate', {
-                                    valueAsDate: true
-                                })}
-                                className={classNames({
-                                    'p-invalid': isSubmitted && errors.birthDate
-                                })}
+                            <Controller
+                                name="birthDate"
+                                control={control}
+                                render={({ field }) => (
+                                    <InputText
+                                        id="birthDate"
+                                        type="date"
+                                        value={formatDateInput(field.value)}
+                                        onChange={(event) => {
+                                            field.onChange(event.target.value ? new Date(`${event.target.value}T00:00:00`) : null);
+                                        }}
+                                        onBlur={field.onBlur}
+                                        className={classNames({
+                                            'p-invalid': isSubmitted && errors.birthDate
+                                        })}
+                                    />
+                                )}
                             />
 
                             {errors.birthDate?.message && <small className="p-error">{errors.birthDate.message}</small>}
@@ -215,15 +212,23 @@ export default function PatientForm() {
                         <div className="col-12 md:col-4 field">
                             <label htmlFor="startTreatment">Início do Tratamento</label>
 
-                            <InputText
-                                id="startTreatment"
-                                type="date"
-                                {...register('startTreatment', {
-                                    valueAsDate: true
-                                })}
-                                className={classNames({
-                                    'p-invalid': isSubmitted && errors.startTreatment
-                                })}
+                            <Controller
+                                name="startTreatment"
+                                control={control}
+                                render={({ field }) => (
+                                    <InputText
+                                        id="startTreatment"
+                                        type="date"
+                                        value={formatDateInput(field.value)}
+                                        onChange={(event) => {
+                                            field.onChange(event.target.value ? new Date(`${event.target.value}T00:00:00`) : null);
+                                        }}
+                                        onBlur={field.onBlur}
+                                        className={classNames({
+                                            'p-invalid': isSubmitted && errors.startTreatment
+                                        })}
+                                    />
+                                )}
                             />
 
                             {errors.startTreatment?.message && <small className="p-error">{errors.startTreatment.message}</small>}
@@ -280,4 +285,20 @@ function parseDate(value: Date | string | null | undefined): Date | null {
     const dateValue = value.substring(0, 10);
 
     return new Date(`${dateValue}T00:00:00`);
+}
+
+function formatDateInput(value: Date | string | null | undefined): string {
+    if (!value) {
+        return '';
+    }
+
+    if (typeof value === 'string') {
+        return value.substring(0, 10);
+    }
+
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const day = String(value.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
 }
