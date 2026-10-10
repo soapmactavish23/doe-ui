@@ -12,7 +12,7 @@ import { Message } from '@/app/components/Message';
 import { buildActionTemplate } from '@/app/components/datatable/buildActionTemplate';
 import { confirmDelete } from '@/app/components/datatable/confirmDelete';
 
-import { cloneResponsable, createEmptyResponsable, Responsable } from '../../domain/responsable';
+import { cloneResponsable, createEmptyResponsable, Responsable, ResponsableType, ResponsableTypeDescription } from '../../domain/responsable';
 
 import DialogResponsable from './DialogResponsable';
 
@@ -141,7 +141,7 @@ export default function DataTableResponsables({ list, onChange }: DataTableRespo
 
                     <Column field="contact" header="Contato" />
 
-                    <Column field="type" header="Tipo" />
+                    <Column field="type" header="Tipo" body={(rowData) => ResponsableTypeDescription[rowData.type as ResponsableType] ?? '-'} />
 
                     <Column field="localWorker" header="Local de Trabalho" />
 
