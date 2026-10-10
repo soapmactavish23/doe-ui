@@ -7,6 +7,13 @@ export enum ResponsableType {
     OTHER = 'OTHER'
 }
 
+export const ResponsableTypeDescription: Record<ResponsableType, string> = {
+    [ResponsableType.MOTHER]: 'Mãe',
+    [ResponsableType.FATHER]: 'Pai',
+    [ResponsableType.GUARDIAN]: 'Responsável Legal',
+    [ResponsableType.OTHER]: 'Outro'
+};
+
 export interface Responsable {
     id: string | null;
     name: string;
