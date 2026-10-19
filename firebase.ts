@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getMessaging, getToken, isSupported, onMessage } from 'firebase/messaging';
+import { deleteToken, getMessaging, getToken, isSupported, onMessage } from 'firebase/messaging';
 
 const firebaseConfig = {
     apiKey: 'AIzaSyDLSZ4h9ozpG9Ic_qqL7uLOhGIdwc_9Xyo',
@@ -31,6 +31,8 @@ export async function getFirebaseToken() {
             vapidKey: 'BFISrkQU-X46lDFw1VMGio3kB9Tr_Cag1linRHmDrVj22kuoQMAqbcLFCxZfgFJiD2r3StqOSSgBhZA0uUW2usM',
             serviceWorkerRegistration: registration
         });
+
+        console.log('Novo token FCM gerado:', Boolean(token));
 
         return token ?? '';
     } catch (error) {

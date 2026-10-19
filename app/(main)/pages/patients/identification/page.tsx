@@ -170,6 +170,12 @@ export default function IdentificationPage() {
         let unsubscribe: (() => void) | undefined;
 
         const handleNotification = async (payload: any) => {
+            console.log('FCM recebido no frontend:', {
+                identificationId: payload.data?.identificationId,
+                status: payload.data?.status,
+                currentId: identificationIdRef.current
+            });
+
             const currentId = identificationIdRef.current;
 
             const receivedId = payload.data?.identificationId;
@@ -179,6 +185,7 @@ export default function IdentificationPage() {
             }
 
             if (notificationInProgress.current) {
+                ('');
                 return;
             }
 
