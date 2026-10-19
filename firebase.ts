@@ -2,13 +2,13 @@ import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, isSupported, onMessage } from 'firebase/messaging';
 
 const firebaseConfig = {
-    apiKey: 'AIzaSyBXA9gLuHoSxoVwi1Gyd_Z9ODTuHv3-kIQ',
-    authDomain: 'doe-88ba8.firebaseapp.com',
-    projectId: 'doe-88ba8',
-    storageBucket: 'doe-88ba8.firebasestorage.app',
-    messagingSenderId: '650480503578',
-    appId: '1:650480503578:web:23ad91390e7bf8e1c6baa3',
-    measurementId: 'G-NQZKDG0QNB'
+    apiKey: 'AIzaSyDLSZ4h9ozpG9Ic_qqL7uLOhGIdwc_9Xyo',
+    authDomain: 'doe-project-103b1.firebaseapp.com',
+    projectId: 'doe-project-103b1',
+    storageBucket: 'doe-project-103b1.firebasestorage.app',
+    messagingSenderId: '737195841349',
+    appId: '1:737195841349:web:ee9b0a39c90cc90bdd102c',
+    measurementId: 'G-5Y85MT9FX0'
 };
 
 const app = initializeApp(firebaseConfig);
@@ -28,7 +28,7 @@ export async function getFirebaseToken() {
         const messaging = getMessaging(app);
 
         const token = await getToken(messaging, {
-            vapidKey: 'BJNf2IJM0jDjHH3-ykE55eHHscX7y9C8EDd9p-qJnQeV2FITDhP5qvijK_DQpAyf6JNwpHCMMkOViI-YSpMSOsg',
+            vapidKey: 'BFISrkQU-X46lDFw1VMGio3kB9Tr_Cag1linRHmDrVj22kuoQMAqbcLFCxZfgFJiD2r3StqOSSgBhZA0uUW2usM',
             serviceWorkerRegistration: registration
         });
 

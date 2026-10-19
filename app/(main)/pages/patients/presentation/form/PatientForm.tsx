@@ -22,6 +22,7 @@ import { usePatientForm } from '../../application/usePatientForm';
 import { PatientFormInput, PatientFormOutput, patientSchema } from './schemas/patient.schema';
 import DataTableResponsables from './DataTableResponsables';
 import { Toast } from 'primereact/toast';
+import { useRouter } from 'next/navigation';
 
 export default function PatientForm() {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +56,8 @@ export default function PatientForm() {
 
         defaultValues: createEmptyPatientRequest()
     });
+
+    const router = useRouter();
 
     useEffect(() => {
         if (!patient) {
@@ -259,7 +262,7 @@ export default function PatientForm() {
                     <hr />
 
                     <div className="flex justify-content-between align-items-center mt-4">
-                        {/* <Button type="button" label="Mapear por IA" icon="pi pi-sparkles" severity="info" /> */}
+                        <Button type="button" label="Mapear por IA" severity="info" onClick={() => router.push('/pages/patients/identification')} />
 
                         <div className="flex gap-2">
                             <Button type="button" label="Cancelar" icon="pi pi-times" severity="danger" outlined disabled={isSubmitting} onClick={cancel} />
