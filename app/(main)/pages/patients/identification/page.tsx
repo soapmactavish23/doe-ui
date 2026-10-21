@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { Steps } from 'primereact/steps';
 import { ProgressBar } from 'primereact/progressbar';
@@ -11,13 +11,9 @@ import { MenuItem } from 'primereact/menuitem';
 
 import PatientForm from '../presentation/form/PatientForm';
 
-import { getFirebaseToken } from '@/firebase';
-
 import { IdentificationStatus } from './domain/identification';
-import { identificationRepository } from './infrastructure/identification.repository';
-import { identificationStorage } from './application/identification.storage';
-
-import { onMessageListener } from '@/firebase';
+import { identificationService } from './application/identification.service';
+import { identificationNotification } from './application/identification.notification';
 
 export default function IdentificationPage() {
     const fileUploadRef = useRef<FileUpload>(null);
@@ -30,7 +26,8 @@ export default function IdentificationPage() {
     const [error, setError] = useState<string | null>(null);
 
     const identificationIdRef = useRef<string | null>(null);
-    const notificationInProgress = useRef(false);
+    const statusRef = useRef<IdentificationStatus | null>(null);
+    const pendingNotifications = useRef(new Set<string>());
 
     const isFailed = status === IdentificationStatus.FAILED;
     const isCompleted = status === IdentificationStatus.COMPLETED;
@@ -43,6 +40,117 @@ export default function IdentificationPage() {
     const progress = isCompleted ? 100 : 0;
 
     const steps: MenuItem[] = [{ label: 'Pendente' }, { label: 'Progresso' }, { label: isFailed ? 'Falha' : 'Completo' }];
+
+    const updateStatus = useCallback((nextStatus: IdentificationStatus, showToast = true) => {
+        const previousStatus = statusRef.current;
+
+        // Não retroceder um processamento já finalizado.
+        if (previousStatus === IdentificationStatus.COMPLETED || previousStatus === IdentificationStatus.FAILED) {
+            return;
+        }
+
+        statusRef.current = nextStatus;
+        setStatus(nextStatus);
+
+        if (nextStatus === IdentificationStatus.COMPLETED) {
+            setError(null);
+
+            if (showToast) {
+                toast.current?.show({
+                    severity: 'success',
+                    summary: 'Identificação concluída',
+                    detail: 'O documento foi processado com sucesso.',
+                    life: 4000
+                });
+            }
+        }
+
+        if (nextStatus === IdentificationStatus.FAILED) {
+            setError('O processamento da identificação falhou.');
+
+            if (showToast) {
+                toast.current?.show({
+                    severity: 'error',
+                    summary: 'Falha na identificação',
+                    detail: 'Não foi possível processar o documento.',
+                    life: 5000
+                });
+            }
+        }
+    }, []);
+
+    const refreshIdentification = useCallback(
+        async (id: string) => {
+            try {
+                const response = await identificationService.findById(id);
+
+                if (identificationIdRef.current !== id) return;
+
+                console.log('[DOE] Status recebido:', response.status);
+
+                updateStatus(response.status);
+            } catch (err) {
+                console.error('[DOE] Erro ao consultar identificação:', err);
+                setError('Não foi possível recuperar o resultado.');
+            }
+        },
+        [updateStatus]
+    );
+
+    // Recuperação ao carregar a página.
+    useEffect(() => {
+        const savedId = identificationService.getSavedIdentificationId();
+
+        if (!savedId) return;
+
+        identificationIdRef.current = savedId;
+        setIdentificationId(savedId);
+
+        void refreshIdentification(savedId);
+    }, [refreshIdentification]);
+
+    // Inscrição nos eventos do Firebase.
+    useEffect(() => {
+        let cancelled = false;
+        let unsubscribe: (() => void) | undefined;
+
+        identificationNotification
+            .subscribe(async (notification) => {
+                if (cancelled) return;
+
+                const currentId = identificationIdRef.current;
+
+                console.log('[DOE] Notificação:', notification);
+
+                if (!currentId) {
+                    pendingNotifications.current.add(notification.identificationId);
+                    return;
+                }
+
+                if (notification.identificationId !== currentId) {
+                    return;
+                }
+
+                await refreshIdentification(currentId);
+            })
+            .then((unsubscribeFn) => {
+                if (cancelled) {
+                    unsubscribeFn();
+                } else {
+                    unsubscribe = unsubscribeFn;
+                }
+            })
+            .catch((err) => {
+                if (!cancelled) {
+                    console.error('[DOE] Erro ao registrar notificações:', err);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+            unsubscribe?.();
+        };
+    }, [refreshIdentification]);
 
     const handleSelect = (event: FileUploadSelectEvent) => {
         const selectedFile = event.files[0];
@@ -60,35 +168,13 @@ export default function IdentificationPage() {
             setLoading(true);
             setError(null);
 
-            const pushToken = await getFirebaseToken();
-
-            if (!pushToken || !pushToken.trim()) {
-                const message = 'Não foi possível ativar as notificações Firebase. ' + 'O documento não foi enviado. Verifique as permissões ' + 'e a configuração do Firebase.';
-
-                setError(message);
-
-                toast.current?.show({
-                    severity: 'error',
-                    summary: 'Notificações indisponíveis',
-                    detail: message,
-                    life: 6000
-                });
-
-                return;
-            }
-
-            const response = await identificationRepository.create({
-                file,
-                pushToken
-            });
-
-            identificationStorage.saveIdentificationId(response.id);
+            const response = await identificationService.create(file);
 
             identificationIdRef.current = response.id;
-            notificationInProgress.current = false;
+            statusRef.current = null;
 
             setIdentificationId(response.id);
-            setStatus(response.status);
+            updateStatus(response.status, false);
 
             setFile(null);
             fileUploadRef.current?.clear();
@@ -96,30 +182,29 @@ export default function IdentificationPage() {
             toast.current?.show({
                 severity: 'info',
                 summary: 'Documento enviado',
-                detail: 'Aguardando resposta do processamento.',
+                detail: 'Aguardando processamento.',
                 life: 3000
             });
+
+            if (pendingNotifications.current.has(response.id)) {
+                pendingNotifications.current.delete(response.id);
+                void refreshIdentification(response.id);
+            }
         } catch (err) {
-            console.error('Erro ao iniciar identificação:', err);
+            console.error('[DOE] Erro ao enviar documento:', err);
 
-            setError('Não foi possível enviar o documento.');
-
-            toast.current?.show({
-                severity: 'error',
-                summary: 'Erro',
-                detail: 'Falha ao enviar o documento.',
-                life: 4000
-            });
+            setError(err instanceof Error ? err.message : 'Não foi possível enviar o documento.');
         } finally {
             setLoading(false);
         }
     };
 
     const handleReset = () => {
-        identificationStorage.clearIdentification();
+        identificationService.clear();
 
         identificationIdRef.current = null;
-        notificationInProgress.current = false;
+        statusRef.current = null;
+        pendingNotifications.current.clear();
 
         setFile(null);
         setIdentificationId(null);
@@ -128,131 +213,6 @@ export default function IdentificationPage() {
 
         fileUploadRef.current?.clear();
     };
-
-    useEffect(() => {
-        const savedId = identificationStorage.getIdentificationId();
-
-        if (!savedId) return;
-
-        identificationIdRef.current = savedId;
-        setIdentificationId(savedId);
-
-        let cancelled = false;
-
-        const restoreIdentification = async () => {
-            try {
-                const response = await identificationRepository.findById(savedId);
-
-                if (!cancelled && identificationIdRef.current === savedId) {
-                    setStatus(response.status);
-
-                    if (response.status === IdentificationStatus.FAILED) {
-                        setError('O processamento da identificação falhou.');
-                    }
-                }
-            } catch (err) {
-                if (!cancelled) {
-                    console.error('Erro ao recuperar identificação:', err);
-                    setError('Não foi possível recuperar a identificação anterior.');
-                }
-            }
-        };
-
-        void restoreIdentification();
-
-        return () => {
-            cancelled = true;
-        };
-    }, []);
-
-    useEffect(() => {
-        let cancelled = false;
-        let unsubscribe: (() => void) | undefined;
-
-        const handleNotification = async (payload: any) => {
-            console.log('FCM recebido no frontend:', {
-                identificationId: payload.data?.identificationId,
-                status: payload.data?.status,
-                currentId: identificationIdRef.current
-            });
-
-            const currentId = identificationIdRef.current;
-
-            const receivedId = payload.data?.identificationId;
-
-            if (!currentId || receivedId !== currentId) {
-                return;
-            }
-
-            if (notificationInProgress.current) {
-                ('');
-                return;
-            }
-
-            notificationInProgress.current = true;
-
-            try {
-                // Uma única consulta após a notificação Firebase.
-                const response = await identificationRepository.findById(currentId);
-
-                if (cancelled || identificationIdRef.current !== currentId) {
-                    return;
-                }
-
-                setStatus(response.status);
-
-                if (response.status === IdentificationStatus.COMPLETED) {
-                    setError(null);
-
-                    toast.current?.show({
-                        severity: 'success',
-                        summary: 'Identificação concluída',
-                        detail: 'O documento foi processado com sucesso.',
-                        life: 4000
-                    });
-                }
-
-                if (response.status === IdentificationStatus.FAILED) {
-                    setError('O processamento da identificação falhou.');
-
-                    toast.current?.show({
-                        severity: 'error',
-                        summary: 'Falha na identificação',
-                        detail: 'Não foi possível processar o documento.',
-                        life: 5000
-                    });
-                }
-            } catch (err) {
-                if (cancelled) return;
-
-                console.error('Erro ao consultar identificação:', err);
-
-                setError('A notificação foi recebida, mas não foi possível consultar o resultado.');
-            } finally {
-                notificationInProgress.current = false;
-            }
-        };
-
-        onMessageListener(handleNotification)
-            .then((unsubscribeFn) => {
-                if (cancelled) {
-                    unsubscribeFn?.();
-                } else {
-                    unsubscribe = unsubscribeFn;
-                }
-            })
-            .catch((err) => {
-                if (!cancelled) {
-                    console.error('Erro ao registrar listener Firebase:', err);
-                    setError('Não foi possível ativar as notificações Firebase.');
-                }
-            });
-
-        return () => {
-            cancelled = true;
-            unsubscribe?.();
-        };
-    }, []);
 
     return (
         <div className="card">
@@ -271,12 +231,14 @@ export default function IdentificationPage() {
 
                         <span>{file.name}</span>
 
-                        <Button icon="pi pi-times" rounded text severity="danger" onClick={handleReset} tooltip="Remover arquivo" />
+                        <Button label="Remover" icon="pi pi-times" text severity="danger" onClick={handleReset} />
                     </div>
                 )}
 
-                <Button label="Iniciar mapeamento" icon="pi pi-sparkles" severity="info" loading={loading} disabled={!file} onClick={handleUpload} />
+                <Button label="Iniciar mapeamento" icon="pi pi-sparkles" severity="info" loading={loading} disabled={!file || loading} onClick={handleUpload} />
+
                 {identificationId && !isCompleted && !isFailed && !error && <Message severity="info" text="Documento enviado com sucesso. Aguardando resposta do processamento por inteligência artificial..." />}
+
                 {error && <Message severity="error" text={error} className="w-full" />}
             </div>
 

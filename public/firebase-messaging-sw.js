@@ -1,3 +1,4 @@
+
 importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js');
 
@@ -11,4 +12,48 @@ firebase.initializeApp({
     measurementId: 'G-5Y85MT9FX0'
 });
 
-firebase.messaging();
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage(async (payload) => {
+    const identificationId = payload.data?.identificationId;
+    const status = payload.data?.status;
+
+    console.log('[DOE SW] Notificação recebida:', {
+        identificationId,
+        status
+    });
+
+    if (!identificationId || !status) return;
+
+    const clients = await self.clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true
+    });
+
+    for (const client of clients) {
+        client.postMessage({
+            type: 'DOE_IDENTIFICATION_STATUS',
+            identificationId,
+            status
+        });
+    }
+
+    const completed = status === 'COMPLETED';
+
+    await self.registration.showNotification(
+        completed
+            ? 'Identificação concluída'
+            : 'Falha na identificação',
+        {
+            body: completed
+                ? 'O documento foi processado com sucesso.'
+                : 'Não foi possível processar o documento.',
+            icon: '/favicon.ico',
+            tag: identificationId,
+            data: {
+                identificationId,
+                status
+            }
+        }
+    );
+});

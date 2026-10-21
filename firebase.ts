@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { deleteToken, getMessaging, getToken, isSupported, onMessage } from 'firebase/messaging';
+import { getMessaging, getToken, isSupported, onMessage } from 'firebase/messaging';
 
 const firebaseConfig = {
     apiKey: 'AIzaSyDLSZ4h9ozpG9Ic_qqL7uLOhGIdwc_9Xyo',
