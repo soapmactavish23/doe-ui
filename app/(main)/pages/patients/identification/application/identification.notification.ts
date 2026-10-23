@@ -11,7 +11,15 @@ export const identificationNotification = {
     async subscribe(callback: NotificationCallback): Promise<() => void> {
         let active = true;
 
+        console.info('[DOE FCM] Registrando listeners de notificação');
+
         const dispatch = (identificationId: unknown, status: unknown) => {
+            console.info('[DOE FCM] Evento recebido:', {
+                identificationId,
+                status,
+                active
+            });
+
             if (!active) return;
 
             if (typeof identificationId !== 'string' || typeof status !== 'string') {
@@ -26,6 +34,8 @@ export const identificationNotification = {
                 return;
             }
 
+            console.info('[DOE FCM] Mensagem recebida do Service Worker');
+
             dispatch(event.data.identificationId, event.data.status);
         };
 
@@ -33,12 +43,15 @@ export const identificationNotification = {
 
         try {
             const unsubscribeFirebase = await onMessageListener((payload: any) => {
+                console.info('[DOE FCM] Mensagem recebida diretamente do Firebase');
+
                 dispatch(payload.data?.identificationId, payload.data?.status);
             });
 
+            console.info('[DOE FCM] Listeners registrados');
+
             return () => {
                 active = false;
-
                 unsubscribeFirebase?.();
 
                 navigator.serviceWorker?.removeEventListener('message', handleServiceWorkerMessage);
@@ -47,6 +60,8 @@ export const identificationNotification = {
             active = false;
 
             navigator.serviceWorker?.removeEventListener('message', handleServiceWorkerMessage);
+
+            console.error('[DOE FCM] Falha ao registrar listeners:', error);
 
             throw error;
         }

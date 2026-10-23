@@ -8,7 +8,8 @@ import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
 import { Toast } from 'primereact/toast';
 import { MenuItem } from 'primereact/menuitem';
-
+import { PatientRequest } from '../domain/patient';
+import { identificationMapper } from './application/identification.mapper';
 import PatientForm from '../presentation/form/PatientForm';
 
 import { IdentificationStatus } from './domain/identification';
@@ -40,6 +41,8 @@ export default function IdentificationPage() {
     const progress = isCompleted ? 100 : 0;
 
     const steps: MenuItem[] = [{ label: 'Pendente' }, { label: 'Progresso' }, { label: isFailed ? 'Falha' : 'Completo' }];
+
+    const [patientData, setPatientData] = useState<PatientRequest | null>(null);
 
     const updateStatus = useCallback((nextStatus: IdentificationStatus, showToast = true) => {
         const previousStatus = statusRef.current;
@@ -87,6 +90,17 @@ export default function IdentificationPage() {
                 if (identificationIdRef.current !== id) return;
 
                 console.log('[DOE] Status recebido:', response.status);
+
+                if (response.status === IdentificationStatus.COMPLETED) {
+                    if (!response.result) {
+                        setError('A identificação foi concluída, mas não retornou dados.');
+                        return;
+                    }
+
+                    const mappedPatient = identificationMapper.toPatientRequest(response.result);
+
+                    setPatientData(mappedPatient);
+                }
 
                 updateStatus(response.status);
             } catch (err) {
@@ -170,6 +184,8 @@ export default function IdentificationPage() {
 
             const response = await identificationService.create(file);
 
+            setPatientData(null);
+
             identificationIdRef.current = response.id;
             statusRef.current = null;
 
@@ -210,6 +226,7 @@ export default function IdentificationPage() {
         setIdentificationId(null);
         setStatus(null);
         setError(null);
+        setPatientData(null);
 
         fileUploadRef.current?.clear();
     };
@@ -248,7 +265,7 @@ export default function IdentificationPage() {
 
             <Steps model={steps} activeIndex={activeIndex} readOnly className="mb-3" />
 
-            {isCompleted && <PatientForm />}
+            {isCompleted && patientData && <PatientForm initialData={patientData} />}
         </div>
     );
 }

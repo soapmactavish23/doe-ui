@@ -24,7 +24,11 @@ import DataTableResponsables from './DataTableResponsables';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/navigation';
 
-export default function PatientForm() {
+interface PatientFormProps {
+    initialData?: PatientRequest | null;
+}
+
+export default function PatientForm({ initialData }: PatientFormProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const {
@@ -58,6 +62,15 @@ export default function PatientForm() {
     });
 
     const router = useRouter();
+
+    useEffect(() => {
+        if (!initialData || patientId) {
+            return;
+        }
+
+        reset(initialData);
+        setResponsables(initialData.responsables);
+    }, [initialData, patientId, reset, setResponsables]);
 
     useEffect(() => {
         if (!patient) {
