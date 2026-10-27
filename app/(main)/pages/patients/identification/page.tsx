@@ -15,6 +15,7 @@ import PatientForm from '../presentation/form/PatientForm';
 import { IdentificationStatus } from './domain/identification';
 import { identificationService } from './application/identification.service';
 import { identificationNotification } from './application/identification.notification';
+import { useRouter } from 'next/navigation';
 
 export default function IdentificationPage() {
     const fileUploadRef = useRef<FileUpload>(null);
@@ -43,6 +44,8 @@ export default function IdentificationPage() {
     const steps: MenuItem[] = [{ label: 'Pendente' }, { label: 'Progresso' }, { label: isFailed ? 'Falha' : 'Completo' }];
 
     const [patientData, setPatientData] = useState<PatientRequest | null>(null);
+
+    const router = useRouter();
 
     const updateStatus = useCallback((nextStatus: IdentificationStatus, showToast = true) => {
         const previousStatus = statusRef.current;
@@ -252,8 +255,6 @@ export default function IdentificationPage() {
                     </div>
                 )}
 
-                <Button label="Iniciar mapeamento" icon="pi pi-sparkles" severity="info" loading={loading} disabled={!file || loading} onClick={handleUpload} />
-
                 {identificationId && !isCompleted && !isFailed && !error && <Message severity="info" text="Documento enviado com sucesso. Aguardando resposta do processamento por inteligência artificial..." />}
 
                 {error && <Message severity="error" text={error} className="w-full" />}
@@ -266,6 +267,19 @@ export default function IdentificationPage() {
             <Steps model={steps} activeIndex={activeIndex} readOnly className="mb-3" />
 
             {isCompleted && patientData && <PatientForm initialData={patientData} />}
+            <hr />
+            {!identificationId && (
+                <div className="flex justify-content-between align-items-center w-full">
+                    <Button
+                        label="Voltar"
+                        icon="pi pi-arrow-left"
+                        onClick={() => {
+                            router.back();
+                        }}
+                    ></Button>
+                    <Button label="Iniciar mapeamento" icon="pi pi-play" severity="info" loading={loading} disabled={!file || loading} onClick={handleUpload} />
+                </div>
+            )}
         </div>
     );
 }
