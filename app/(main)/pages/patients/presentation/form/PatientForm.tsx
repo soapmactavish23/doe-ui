@@ -2,9 +2,9 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { Button } from 'primereact/button';
@@ -12,6 +12,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { Fieldset } from 'primereact/fieldset';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
+import { Toast } from 'primereact/toast';
 
 import imgUser from '@/public/user.png';
 
@@ -20,27 +21,14 @@ import { createEmptyPatientRequest, PatientRequest } from '../../domain/patient'
 import { usePatientForm } from '../../application/usePatientForm';
 
 import { PatientFormInput, PatientFormOutput, patientSchema } from './schemas/patient.schema';
+
 import DataTableResponsables from './DataTableResponsables';
-import { Toast } from 'primereact/toast';
 
 export default function PatientForm() {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const router = useRouter();
 
-    const {
-        patientId,
-        patient,
-        toast,
-        imagePreview,
-        responsables,
-        setResponsables,
-
-        isLoading,
-        isError,
-
-        changeImage,
-        save,
-        cancel
-    } = usePatientForm();
+    const { patientId, identificationId, patient, identificationData, toast, imagePreview, responsables, setResponsables, isLoading, isError, changeImage, save, cancel } = usePatientForm();
 
     const {
         register,
@@ -48,18 +36,15 @@ export default function PatientForm() {
         control,
         reset,
         setValue,
-
         formState: { errors, isSubmitted, isSubmitting }
     } = useForm<PatientFormInput, unknown, PatientFormOutput>({
         resolver: zodResolver(patientSchema),
-
         defaultValues: createEmptyPatientRequest()
     });
 
+    // Edição de paciente existente.
     useEffect(() => {
-        if (!patient) {
-            return;
-        }
+        if (!patient) return;
 
         reset({
             name: patient.name ?? '',
@@ -71,6 +56,21 @@ export default function PatientForm() {
         });
     }, [patient, reset]);
 
+    // Cadastro preenchido automaticamente pelo OCR.
+    useEffect(() => {
+        if (!identificationData || patientId) return;
+
+        reset({
+            name: identificationData.name,
+            birthDate: identificationData.birthDate,
+            sex: identificationData.sex ?? null,
+            cause: identificationData.cause,
+            startTreatment: identificationData.startTreatment,
+            responsables: identificationData.responsables
+        });
+    }, [identificationData, patientId, reset]);
+
+    // Mantém o React Hook Form sincronizado com a tabela.
     useEffect(() => {
         setValue('responsables', responsables, {
             shouldDirty: true,
@@ -95,8 +95,10 @@ export default function PatientForm() {
 
     if (isLoading) {
         return (
-            <div className="card flex justify-content-center align-items-center">
+            <div className="card flex flex-column justify-content-center align-items-center gap-3">
                 <i className="pi pi-spin pi-spinner text-4xl" />
+
+                <span>{identificationId ? 'Carregando dados extraídos pela inteligência artificial...' : 'Carregando paciente...'}</span>
             </div>
         );
     }
@@ -104,7 +106,11 @@ export default function PatientForm() {
     if (isError) {
         return (
             <div className="card">
-                <small className="p-error">Não foi possível carregar o paciente.</small>
+                <small className="p-error">{identificationId ? 'Não foi possível carregar o resultado da identificação.' : 'Não foi possível carregar o paciente.'}</small>
+
+                <div className="mt-3">
+                    <Button label="Voltar" icon="pi pi-arrow-left" outlined onClick={() => router.back()} />
+                </div>
             </div>
         );
     }
@@ -112,8 +118,21 @@ export default function PatientForm() {
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <Toast ref={toast} />
+
             <div className="card">
                 <Fieldset legend={patientId ? 'Editar Paciente' : 'Cadastrar Paciente'}>
+                    {identificationId && (
+                        <div className="mb-4">
+                            <div className="flex align-items-center gap-2 text-primary mb-2">
+                                <i className="pi pi-sparkles" />
+
+                                <strong>Dados identificados por Inteligência Artificial</strong>
+                            </div>
+
+                            <p className="text-600 m-0">Confira as informações extraídas do documento antes de salvar o cadastro.</p>
+                        </div>
+                    )}
+
                     <div className="flex flex-column align-items-center justify-content-center gap-3 mb-4">
                         <img
                             src={imagePreview || imgUser.src}
@@ -259,7 +278,7 @@ export default function PatientForm() {
                     <hr />
 
                     <div className="flex justify-content-between align-items-center mt-4">
-                        {/* <Button type="button" label="Mapear por IA" icon="pi pi-sparkles" severity="info" /> */}
+                        <Button type="button" label="Mapear por IA" icon="pi pi-sparkles" severity="info" outlined onClick={() => router.push('/pages/patients/identification')} />
 
                         <div className="flex gap-2">
                             <Button type="button" label="Cancelar" icon="pi pi-times" severity="danger" outlined disabled={isSubmitting} onClick={cancel} />
